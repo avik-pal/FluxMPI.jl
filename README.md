@@ -23,8 +23,3 @@ gs = Zygote.gradient(() -> sum(model_dp(x)), Flux.params(model_dp))
 ```
 
 Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
-
-
-## TODOs
-
-- [ ] Can we check if MPI is CUDA aware?

@@ -2,6 +2,12 @@ module FluxMPI
 
 using Flux, CUDA, MPI, Zygote
 
+const mpi_is_cuda_aware = Ref(false)
+
+function __init__()
+    mpi_is_cuda_aware[] = MPI.has_cuda()
+end
+
 struct DataParallelFluxModel{M}
     model::M
     device_count::Int
@@ -81,12 +87,18 @@ function Zygote.gradient(func, ps::DataParallelParamsWrapper)
 
     gs = Zygote.gradient(func, ps.params)
 
-    # CUDA aware MPI not working locally :(
-    gs_flattened = flatten_grads(ps, gs) |> cpu
+    gs_flattened = flatten_grads(ps, gs)
+
+    if !mpi_is_cuda_aware[]
+        # Do transfer on CPU since MPI is not CUDA aware
+        gs_flattened = gs_flattened |> cpu
+    end
 
     MPI.Allreduce!(gs_flattened, +, comm)
 
-    if CUDA.functional()
+    if CUDA.functional() && !mpi_is_cuda_aware[]
+        # If CUDA is functional the final result should be on GPU
+        # If MPI were CUDA aware we never transfered the data to CPU
         gs_flattened = gs_flattened |> gpu
     end
 
