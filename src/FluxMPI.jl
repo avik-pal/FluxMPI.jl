@@ -1,11 +1,15 @@
 module FluxMPI
 
-using Flux, CUDA, MPI, Zygote
+using Flux, CUDA, MPI, Zygote, Random
+using Random: AbstractRNG, shuffle!, GLOBAL_RNG
 
 const mpi_is_cuda_aware = Ref(false)
 
 function __init__()
     mpi_is_cuda_aware[] = MPI.has_cuda()
+    if !mpi_is_cuda_aware[]
+        @warn "MPI Implementation is not CUDA Aware"
+    end
 end
 
 struct DataParallelFluxModel{M}
@@ -33,8 +37,17 @@ function Flux.params(dp::DataParallelFluxModel)
     return DataParallelParamsWrapper(buffer, sizes, lengths, ps)
 end
 
+Zygote.Params(ps::DataParallelParamsWrapper) = ps
+
+Flux.Optimise.update!(opt, xs::DataParallelParamsWrapper, gs) =
+    Flux.Optimise.update!(opt, xs.params, gs)
+
 function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
     device_count = length(gpu_devices)
+
+    p, re = Flux.destructure(model)
+    safe_bcast!(p, 0, MPI.COMM_WORLD)
+    model = re(p)
 
     if CUDA.functional()
         @assert device_count > 0
@@ -81,31 +94,102 @@ function unflatten_grads!(
 end
 
 
-function Zygote.gradient(func, ps::DataParallelParamsWrapper)
+function Zygote.withgradient(func, ps::DataParallelParamsWrapper)
     comm = MPI.COMM_WORLD
     size = MPI.Comm_size(comm)
 
-    gs = Zygote.gradient(func, ps.params)
+    y, back = Zygote.pullback(func, ps.params)
+    gs = back(Zygote.sensitivity(y))
 
     gs_flattened = flatten_grads(ps, gs)
 
-    if !mpi_is_cuda_aware[]
-        # Do transfer on CPU since MPI is not CUDA aware
-        gs_flattened = gs_flattened |> cpu
-    end
+    gs_flattened = safe_allreduce!(gs_flattened, +, comm)
 
-    MPI.Allreduce!(gs_flattened, +, comm)
-
-    if CUDA.functional() && !mpi_is_cuda_aware[]
-        # If CUDA is functional the final result should be on GPU
-        # If MPI were CUDA aware we never transfered the data to CPU
-        gs_flattened = gs_flattened |> gpu
-    end
-
-    return unflatten_grads!(gs, ps, gs_flattened ./ size)
+    return (val = y, grad = unflatten_grads!(gs, ps, gs_flattened ./ size))
 end
 
 
-export DataParallelFluxModel
+Zygote.gradient(func, ps::DataParallelParamsWrapper) =
+    Zygote.withgradient(func, ps).grad
+
+
+function DataParallelDataLoader(
+    data;
+    batchsize = 1,
+    shuffle = false,
+    partial = true,
+    rng = GLOBAL_RNG,
+)
+    batchsize > 0 || throw(ArgumentError("Need positive batchsize"))
+
+    comm = MPI.COMM_WORLD
+    size = MPI.Comm_size(comm)
+    rank = MPI.Comm_rank(comm)
+
+    _n = Flux.Data._nobs(data)
+
+    partitions = collect(
+        Iterators.partition(Random.shuffle(rng, 1:_n), Int(ceil(_n / size))),
+    )
+    idxs = collect(partitions[rank+1])
+
+    n = length(idxs)
+
+    if n < batchsize
+        @warn "Number of observations less than batchsize, decreasing the batchsize to $n"
+        batchsize = n
+    end
+
+    imax = partial ? n : n - batchsize + 1
+    return Flux.Data.DataLoader(
+        data,
+        batchsize,
+        n,
+        partial,
+        imax,
+        idxs,
+        shuffle,
+        rng,
+    )
+end
+
+
+function safe_allreduce!(v::AbstractArray, op, comm)
+    MPI.Allreduce!(v, op, comm)
+    return v
+end
+
+function safe_allreduce!(v::CuArray, op, comm)
+    if !mpi_is_cuda_aware[]
+        # Do transfer on CPU since MPI is not CUDA aware
+        v = v |> cpu
+    end
+    MPI.Allreduce!(v, op, comm)
+    if !mpi_is_cuda_aware[]
+        v = v |> gpu
+    end
+    return v
+end
+
+function safe_bcast!(v::AbstractArray, root::Integer, comm)
+    MPI.Bcast!(v, root, comm)
+    return v
+end
+
+function safe_bcast!(v::CuArray, root::Integer, comm)
+    if !mpi_is_cuda_aware[]
+        # Do transfer on CPU since MPI is not CUDA aware
+        v = v |> cpu
+    end
+    MPI.Bcast!(v, root, comm)
+    if !mpi_is_cuda_aware[]
+        v = v |> gpu
+    end
+    return v
+end
+
+
+export DataParallelFluxModel, DataParallelDataLoader
+export safe_allreduce!, safe_bcast!
 
 end
