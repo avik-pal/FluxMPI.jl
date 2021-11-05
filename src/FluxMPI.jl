@@ -103,9 +103,9 @@ function Zygote.withgradient(func, ps::DataParallelParamsWrapper)
 
     gs_flattened = flatten_grads(ps, gs)
 
-    gs_flattened = safe_allreduce!(gs_flattened, +, comm)
+    gs_flattened = safe_allreduce!(gs_flattened, (x, y) -> (x + y) / size, comm)
 
-    return (val = y, grad = unflatten_grads!(gs, ps, gs_flattened ./ size))
+    return (val = y, grad = unflatten_grads!(gs, ps, gs_flattened))
 end
 
 
