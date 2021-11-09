@@ -52,6 +52,7 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 1. Wrap your model in `DataParallelFluxModel`
 2. Use `DataParallelDataLoader` instead of `Flux.Data.DataLoader`. If you are using a custom DataLoader you need to ensure that the data is split appropriately.
 3. Modify logging code. You don't want to log from all processes. Instead just log from `rank == 0`.
+4. `Zygote.pullback` is not overloaded. Use `Zygote.withgradient` or `Zygote.gradient` instead.
 
 ## API Reference
 

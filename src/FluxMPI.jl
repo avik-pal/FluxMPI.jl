@@ -6,18 +6,20 @@ using Random: AbstractRNG, shuffle!, GLOBAL_RNG
 const mpi_is_cuda_aware = Ref(false)
 
 function __init__()
+    # If using `mpi_is_cuda_aware` anywhere use the @static macro
+    # since we anyways need to recompile the code when MPI
+    # implementation changes
     mpi_is_cuda_aware[] = MPI.has_cuda()
     if !mpi_is_cuda_aware[]
         @warn "MPI Implementation is not CUDA Aware"
     end
 end
 
-struct DataParallelFluxModel{M}
+struct DataParallelFluxModel{D,M}
     model::M
-    device_count::Int
 end
 
-struct DataParallelParamsWrapper{B,S,L,P}
+struct DataParallelParamsWrapper{D,B,S,L,P}
     buffer::B
     sizes::S
     lengths::L
@@ -28,13 +30,24 @@ Flux.@functor DataParallelFluxModel
 
 Flux.trainable(dp::DataParallelFluxModel) = Flux.trainable(dp.model)
 
-function Flux.params(dp::DataParallelFluxModel)
+function Flux.params(dp::DataParallelFluxModel{D}) where {D}
     ps = Flux.params(dp.model)
     _buffer = zero.(ps)
     sizes = size.(_buffer)
     lengths = length.(_buffer)
     buffer = vcat(vec.(_buffer)...)
-    return DataParallelParamsWrapper(buffer, sizes, lengths, ps)
+    return DataParallelParamsWrapper{
+        D,
+        typeof(buffer),
+        typeof(sizes),
+        typeof(lengths),
+        typeof(ps),
+    }(
+        buffer,
+        sizes,
+        lengths,
+        ps,
+    )
 end
 
 Zygote.Params(ps::DataParallelParamsWrapper) = ps
@@ -43,6 +56,10 @@ Flux.Optimise.update!(opt, xs::DataParallelParamsWrapper, gs) =
     Flux.Optimise.update!(opt, xs.params, gs)
 
 function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
+    comm = MPI.COMM_WORLD
+    rank = MPI.Comm_rank(comm)
+    comm_size = MPI.Comm_size(comm)
+
     device_count = length(gpu_devices)
 
     p, re = Flux.destructure(model)
@@ -52,9 +69,6 @@ function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
     if CUDA.functional()
         @assert device_count > 0
 
-        comm = MPI.COMM_WORLD
-        rank = MPI.Comm_rank(comm)
-
         gpu_id = gpu_devices[rank+1]
 
         @info "Rank $rank: Using GPU $gpu_id"
@@ -63,7 +77,7 @@ function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
         model = model |> gpu
     end
 
-    return DataParallelFluxModel(model, device_count)
+    return DataParallelFluxModel{Val(comm_size),typeof(model)}(model)
 end
 
 (dp::DataParallelFluxModel)(args...) = dp.model(args...)
@@ -108,6 +122,8 @@ function Zygote.withgradient(func, ps::DataParallelParamsWrapper)
     return (val = y, grad = unflatten_grads!(gs, ps, gs_flattened))
 end
 
+Zygote.withgradient(func, ps::DataParallelParamsWrapper{Val{1}}) =
+    Zygote.withgradient(func, ps.params)
 
 Zygote.gradient(func, ps::DataParallelParamsWrapper) =
     Zygote.withgradient(func, ps).grad
@@ -160,12 +176,12 @@ function safe_allreduce!(v::AbstractArray, op, comm)
 end
 
 function safe_allreduce!(v::CuArray, op, comm)
-    if !mpi_is_cuda_aware[]
+    @static if !mpi_is_cuda_aware[]
         # Do transfer on CPU since MPI is not CUDA aware
         v = v |> cpu
     end
     MPI.Allreduce!(v, op, comm)
-    if !mpi_is_cuda_aware[]
+    @static if !mpi_is_cuda_aware[]
         v = v |> gpu
     end
     return v
@@ -177,12 +193,12 @@ function safe_bcast!(v::AbstractArray, root::Integer, comm)
 end
 
 function safe_bcast!(v::CuArray, root::Integer, comm)
-    if !mpi_is_cuda_aware[]
+    @static if !mpi_is_cuda_aware[]
         # Do transfer on CPU since MPI is not CUDA aware
         v = v |> cpu
     end
     MPI.Bcast!(v, root, comm)
-    if !mpi_is_cuda_aware[]
+    @static if !mpi_is_cuda_aware[]
         v = v |> gpu
     end
     return v
