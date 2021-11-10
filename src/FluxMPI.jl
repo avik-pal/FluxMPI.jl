@@ -56,6 +56,11 @@ Flux.Optimise.update!(opt, xs::DataParallelParamsWrapper, gs) =
     Flux.Optimise.update!(opt, xs.params, gs)
 
 function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
+    if !MPI.Initialized()
+        @warn "MPI not initialised, initialising now"
+        MPI.Init()
+    end
+
     comm = MPI.COMM_WORLD
     rank = MPI.Comm_rank(comm)
     comm_size = MPI.Comm_size(comm)
@@ -204,8 +209,25 @@ function safe_bcast!(v::CuArray, root::Integer, comm)
     return v
 end
 
+function safe_reduce!(v::AbstractArray, op, root::Integer, comm)
+    MPI.Reduce!(v, op, root, comm)
+    return v
+end
+
+function safe_reduce!(v::CuArray, op, root::Integer, comm)
+    @static if !mpi_is_cuda_aware[]
+        # Do transfer on CPU since MPI is not CUDA aware
+        v = v |> cpu
+    end
+    MPI.Reduce!(v, op, root, comm)
+    @static if !mpi_is_cuda_aware[]
+        v = v |> gpu
+    end
+    return v
+end
+
 
 export DataParallelFluxModel, DataParallelDataLoader
-export safe_allreduce!, safe_bcast!
+export safe_allreduce!, safe_bcast!, safe_reduce!
 
 end
