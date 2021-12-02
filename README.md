@@ -1,8 +1,20 @@
 # FluxMPI.jl
 
-Project Status: **Experimental**
+Data Parallel Training of Flux Models.
 
-Data Parallel Training of Flux Models. This is mostly an experimental package that I am using for my research projects.
+## Installation
+
+Stable release:
+
+```julia
+] add FluxMPI
+```
+
+Latest development version:
+
+```julia
+] add FluxMPI#main
+```
 
 ## Quick Start
 
@@ -53,6 +65,7 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 2. Use `DataParallelDataLoader` instead of `Flux.Data.DataLoader`. If you are using a custom DataLoader you need to ensure that the data is split appropriately.
 3. Modify logging code. You don't want to log from all processes. Instead just log from `rank == 0`.
 4. `Zygote.pullback` is not overloaded. Use `Zygote.withgradient` or `Zygote.gradient` instead.
+5. If any of your functions dispatch on `typeof(model)` then you need to define a dispatch for `dp::DataParallelFluxModel` and call the function using `dp.model`.
 
 ## API Reference
 
