@@ -4,6 +4,7 @@ using Flux, CUDA, MPI, Zygote, Random
 using Random: AbstractRNG, shuffle!, GLOBAL_RNG
 
 const mpi_is_cuda_aware = Ref(false)
+const FluxMPI_initialized = Ref(false)
 
 function __init__()
     # If using `mpi_is_cuda_aware` anywhere use the @static macro
@@ -13,6 +14,35 @@ function __init__()
     if !mpi_is_cuda_aware[]
         @warn "MPI Implementation is not CUDA Aware"
     end
+end
+
+Initialized() = FluxMPI_initialized[]
+
+function Init(; gpu_devices::Union{Nothing,Vector{Int}} = nothing)
+    if Initialized()
+        @warn "FluxMPI already initialized; Skipping..."
+        return
+    end
+
+    !MPI.Initialized() && MPI.Init()
+
+    comm = MPI.COMM_WORLD
+    rank = MPI.Comm_rank(comm)
+
+    if CUDA.functional()
+        gpu_device = if gpu_devices === nothing
+            device_count = length(CUDA.devices())
+            (rank + 1) % device_count
+        else
+            gpu_devices[rank+1]
+        end
+        @info "Rank $rank: Using GPU $gpu_device"
+        CUDA.device!(gpu_device)
+    else
+        @info "Rank $rank: Using CPU"
+    end
+    FluxMPI_initialized[] = true
+    return
 end
 
 struct DataParallelFluxModel{D,M}
@@ -55,30 +85,20 @@ Zygote.Params(ps::DataParallelParamsWrapper) = ps
 Flux.Optimise.update!(opt, xs::DataParallelParamsWrapper, gs) =
     Flux.Optimise.update!(opt, xs.params, gs)
 
-function DataParallelFluxModel(model, gpu_devices::Vector{Int} = [])
-    if !MPI.Initialized()
-        @warn "MPI not initialised, initialising now"
-        MPI.Init()
+function DataParallelFluxModel(model, gpu_devices::Union{Nothing,Vector{Int}} = nothing)
+    if !Initialized()
+        @warn "FluxMPI not initialised, initialising now"
+        Init(; gpu_devices = gpu_devices)
     end
 
     comm = MPI.COMM_WORLD
-    rank = MPI.Comm_rank(comm)
     comm_size = MPI.Comm_size(comm)
-
-    device_count = length(gpu_devices)
 
     p, re = Flux.destructure(model)
     safe_bcast!(p, 0, MPI.COMM_WORLD)
     model = re(p)
 
     if CUDA.functional()
-        @assert device_count > 0
-
-        gpu_id = gpu_devices[rank+1]
-
-        @info "Rank $rank: Using GPU $gpu_id"
-        CUDA.device!(gpu_id)
-
         model = model |> gpu
     end
 
