@@ -105,7 +105,7 @@ function DataParallelFluxModel(model, gpu_devices::Union{Nothing,Vector{Int}} = 
     return DataParallelFluxModel{Val(comm_size),typeof(model)}(model)
 end
 
-(dp::DataParallelFluxModel)(args...) = dp.model(args...)
+(dp::DataParallelFluxModel)(args...; kwargs...) = dp.model(args...; kwargs...)
 
 
 function flatten_grads(ps::DataParallelParamsWrapper, gs::Zygote.Grads)
