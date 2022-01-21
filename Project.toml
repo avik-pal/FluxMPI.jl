@@ -1,7 +1,7 @@
 name = "FluxMPI"
 uuid = "acf642fa-ee0e-513a-b9d5-bcd150f7ec3b"
 authors = ["Avik Pal <avikpal@mit.edu>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
