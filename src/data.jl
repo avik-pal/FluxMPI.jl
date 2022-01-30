@@ -23,4 +23,6 @@ end
 
 nobs(ddc::DistributedDataContainer) = length(ddc.idxs)
 
-getobs(ddc::DistributedDataContainer, i, args...; kwargs...) = getobs(ddc.data, ddc.idxs[i], args...; kwargs...)
+function getobs(ddc::DistributedDataContainer, i, args...; kwargs...)
+    return getobs(ddc.data, ddc.idxs[i], args...; kwargs...)
+end

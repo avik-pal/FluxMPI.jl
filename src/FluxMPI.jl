@@ -9,7 +9,7 @@ using Flux: params
 using Flux.Optimise: AbstractOptimiser
 using MPI: Request, Waitall!, Allreduce!, Bcast!
 using Zygote: @nograd, Params
-import LearnBase: nobs, getobs
+import MLDataUtils: nobs, getobs
 import Flux.Optimise: update!, apply!
 
 include("common.jl")
