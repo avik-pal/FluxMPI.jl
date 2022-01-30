@@ -1,10 +1,12 @@
 name = "FluxMPI"
 uuid = "acf642fa-ee0e-513a-b9d5-bcd150f7ec3b"
 authors = ["Avik Pal <avikpal@mit.edu>"]
-version = "0.1.2"
+version = "0.2.0"
 
 [deps]
+ArrayInterface = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
@@ -16,4 +18,4 @@ CUDA = "3"
 Flux = "0.12"
 MPI = "0.19"
 Zygote = "0.6"
-julia = "1.6"
+julia = "1.7"
