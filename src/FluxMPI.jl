@@ -9,7 +9,7 @@ using CUDA, MPI
 using Dates: now
 using Flux: params
 using Flux.Optimise: AbstractOptimiser
-using MPI: Request, Waitall!, Allreduce!
+using MPI: Request, Waitall!, Allreduce!, Bcast!
 using Zygote: @nograd, Params
 import Flux.Optimise: update!, apply!
 
@@ -72,7 +72,9 @@ non-blocking Allreduce
 """
 struct DistributedOptimiser{B,O<:AbstractOptimiser}
     optimiser::O
-    function DistributedOptimiser(optimiser::O; blocking_communication::Bool = false) where {O<:AbstractOptimiser}
+    # TODO: Check if non-blocking calls are better. For small scale problems blocking calls are faster
+    #       but that could be because we are unable to use Iallreduce with CuArrays
+    function DistributedOptimiser(optimiser::O; blocking_communication::Bool = true) where {O<:AbstractOptimiser}
         return new{blocking_communication,O}(optimiser)
     end
 end
@@ -118,21 +120,25 @@ function update!(opt::DistributedOptimiser{true}, xs::Params, gs)
 end
 
 """
-    broadcast_parameters(model; root_rank::Integer = 0)
-    broadcast_parameters(ps::Params; root_rank::Integer = 0)
+    broadcast_parameters(model; root_rank::Integer = 0, blocking_communication::Bool = true)
+    broadcast_parameters(ps::Params; root_rank::Integer = 0, blocking_communication::Bool = true)
 
 Sync the parameters of the model across all processes.
 """
 broadcast_parameters(model; kwargs...) = broadcast_parameters(params(model); kwargs...)
 
-function broadcast_parameters(ps::Params; root_rank::Integer=0)
+function broadcast_parameters(ps::Params; root_rank::Integer=0, blocking_communication::Bool = true)
     @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
-    requests = Vector{Request}(undef, length(ps))
-    for (i, p) in enumerate(ps)
-        _, request = Ibcast!(p, root_rank, MPI.COMM_WORLD)
-        requests[i] = request
+    if blocking_communication
+        requests = Vector{Request}(undef, length(ps))
+        for (i, p) in enumerate(ps)
+            _, request = Ibcast!(p, root_rank, MPI.COMM_WORLD)
+            requests[i] = request
+        end
+        Waitall!(requests)
+    else
+        Bcast!.(ps, root_rank, MPI.COMM_WORLD)
     end
-    Waitall!(requests)
     return
 end
 
