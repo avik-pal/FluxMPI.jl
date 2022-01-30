@@ -19,38 +19,32 @@ Latest development version:
 ## Quick Start
 
 ```julia
-using Flux, FluxMPI, MPI, Zygote, CUDA
+using Flux, FluxMPI, CUDA
 
+# Step 1: Initialize FluxMPI. Not doing this will segfault your code
 FluxMPI.Init()
 CUDA.allowscalar(false)
 
-total_gpus = length(CUDA.devices())
-comm = MPI.COMM_WORLD
-rank = MPI.Comm_rank(comm)
-size = MPI.Comm_size(comm)
+# Step 2: Sync Model Parameters
+model = Chain(Dense(1, 2, tanh), Dense(2, 1)) |> gpu
+ps = Flux.params(model)
+broadcast_parameters(model; root_rank = 0)
 
-model = Chain(Dense(1, 2, tanh), Dense(2, 1))
-
-model_dp = DataParallelFluxModel(model)
-
-ps = Flux.params(model_dp)
-
-x = rand(1, 64) |> gpu
+# It is the user's responsibility to partition the data across the processes
+# In this case, we are training on a total of 16 * <np> samples
+x = rand(1, 16) |> gpu
 y = x .^ 2
+dataloader = Flux.DataLoader((x, y), batchsize = 16)
 
-dataloader = DataParallelDataLoader((x, y), batchsize = 16)
+# Step 3: Wrap the optimizer in DistributedOptimizer
+#         Scale the learning rate by the number of workers (`total_workers()`).
+opt = DistributedOptimiser(Flux.ADAM(0.001))
 
-function loss(x_, y_)
-    loss = sum(abs2, model_dp(x_) .- y_)
-    println("Process [$rank / $size]: Loss = $loss")
-    return loss
-end
+loss(x_, y_) = sum(abs2, model(x_) .- y_)
 
 for epoch in 1:100
-    if rank == 0
-        @info "epoch = $epoch" 
-    end
-    Flux.Optimise.train!(loss, ps, dataloader, Flux.ADAM(0.001))
+    local_rank() == 0 && @info "epoch = $epoch"
+    Flux.Optimise.train!(loss, ps, dataloader, opt)
 end
 ```
 
@@ -58,23 +52,39 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 
 ## Usage Instructions
 
-1. Call `FluxMPI.Init()`
-2. Wrap your model in `DataParallelFluxModel`
-3. Use `DataParallelDataLoader` instead of `Flux.Data.DataLoader`. If you are using a custom DataLoader you need to ensure that the data is split appropriately.
-4. Modify logging code. You don't want to log from all processes. Instead just log from `rank == 0`.
-5. `Zygote.pullback` is not overloaded. Use `Zygote.withgradient` or `Zygote.gradient` instead.
-6. If any of your functions dispatch on `typeof(model)` then you need to define a dispatch for `dp::DataParallelFluxModel` and call the function using `dp.model`.
+There are essentially 4 main steps to remember:
+
+1. Initialize FluxMPI (`FluxMPI.Init()`)
+2. Sync Model Parameters (`broadcast_parameters(model; root_rank)`)
+3. Wrap Optimizer in `DistributedOptimizer`
+4. Change logging code to check for `local_rank() == 0`
+
+Finally, start the code using `mpiexecjl -n <np> julia --project=. <filename>.jl`
 
 ## API Reference
 
-* `FluxMPI.Init(; gpu_devices = nothing)`
+All functions have dedicated docstrings. Use the help mode in REPL to access them
 
-  * `gpu_devices`: List of GPU Devices to use. If `nothing` and `CUDA.functional() == true` then use all available GPUs in a round robin fashion.
+### MPIExtensions
 
-* `DataParallelFluxModel`:
+**NOTE: Functions are not exported**
 
-  * `model`: Any Flux model.
+1. `Reduce!`
+2. `Allreduce!`
+3. `Bcast!`
+4. `Iallreduce!`
 
-* `DataParallelParamsWrapper`: Returned by `Flux.params(::DataParallelFluxModel)`. Behaves identical to `Zygote.Params` but synchronizes the gradients for each `Zygote.gradient` call.
+### FluxMPI
 
-* `DataPrallelDataLoader`: Wrapper around `DataLoader` and ensures a proper split of data between the different processes.
+1. `Init`
+2. `DistributedOptimiser`
+3. `broadcast_parameters`
+
+## Known Caveats
+
+1. `Iallreduce!` uses `@async` when using CuArrays. The other alternative right now is to hit a segfault
+2. Using any form of MPI syncing operation like `MPI.Barrier()` without waiting for Julia tasks (see point 1) to finish can lead to deadlocks
+
+## Other Data Parallel Training Libraries
+
+* [ResNetImageNet.jl](`https://github.com/DhairyaLGandhi/ResNetImageNet.jl`)

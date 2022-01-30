@@ -1,253 +1,185 @@
 module FluxMPI
 
-using Flux, CUDA, MPI, Zygote, Random
-using Random: AbstractRNG, shuffle!, GLOBAL_RNG
+include("mpi_extensions.jl")
 
-const mpi_is_cuda_aware = Ref(false)
 const FluxMPI_initialized = Ref(false)
 
-function __init__()
-    # If using `mpi_is_cuda_aware` anywhere use the @static macro
-    # since we anyways need to recompile the code when MPI
-    # implementation changes
-    mpi_is_cuda_aware[] = MPI.has_cuda()
-    if !mpi_is_cuda_aware[]
-        @warn "MPI Implementation is not CUDA Aware"
-    end
-end
+using .MPIExtensions: Iallreduce!, Ibcast!, JuliaTaskRequest
+using CUDA, MPI
+using Dates: now
+using Flux: params
+using Flux.Optimise: AbstractOptimiser
+using MPI: Request, Waitall!, Allreduce!, Bcast!
+using Zygote: @nograd, Params
+import Flux.Optimise: update!, apply!
 
 Initialized() = FluxMPI_initialized[]
 
-function Init(; gpu_devices::Union{Nothing,Vector{Int}} = nothing)
+"""
+    Init(; gpu_devices::Union{Nothing,Vector{Int}} = nothing, verbose::Bool = false)
+
+Setup `FluxMPI`. If GPUs are available and CUDA is functional, each rank is allocated a GPU in a
+round-robin fashion.
+
+If calling this function, no need to call `MPI.Init` first.
+"""
+function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=false)
     if Initialized()
-        @warn "FluxMPI already initialized; Skipping..."
+        verbose && @warn "FluxMPI already initialized; Skipping..."
         return
     end
 
     !MPI.Initialized() && MPI.Init()
 
-    comm = MPI.COMM_WORLD
-    rank = MPI.Comm_rank(comm)
+    rank = local_rank()
 
     if CUDA.functional()
         gpu_device = if gpu_devices === nothing
             device_count = length(CUDA.devices())
             (rank + 1) % device_count
         else
-            gpu_devices[rank+1]
+            gpu_devices[rank + 1]
         end
-        @info "Rank $rank: Using GPU $gpu_device"
+        verbose && @info "Rank $rank: Using GPU $gpu_device"
         CUDA.device!(gpu_device)
     else
-        @info "Rank $rank: Using CPU"
+        verbose && @info "Rank $rank: Using CPU"
     end
     FluxMPI_initialized[] = true
     return
 end
 
-struct DataParallelFluxModel{D,M}
-    model::M
-end
+"""
+    local_rank()
 
-struct DataParallelParamsWrapper{D,B,S,L,P}
-    buffer::B
-    sizes::S
-    lengths::L
-    params::P
-end
+Get the rank of the process.
+"""
+@inline local_rank() = MPI.Comm_rank(MPI.COMM_WORLD)
 
-Flux.@functor DataParallelFluxModel
+"""
+    total_workers()
 
-Flux.trainable(dp::DataParallelFluxModel) = Flux.trainable(dp.model)
+Get the total number of workers.
+"""
+@inline total_workers() = MPI.Comm_size(MPI.COMM_WORLD)
 
-function Flux.params(dp::DataParallelFluxModel{D}) where {D}
-    ps = Flux.params(dp.model)
-    _buffer = zero.(ps)
-    sizes = size.(_buffer)
-    lengths = length.(_buffer)
-    buffer = vcat(vec.(_buffer)...)
-    return DataParallelParamsWrapper{
-        D,
-        typeof(buffer),
-        typeof(sizes),
-        typeof(lengths),
-        typeof(ps),
-    }(
-        buffer,
-        sizes,
-        lengths,
-        ps,
-    )
-end
+"""
+    DistributedOptimiser(optimiser::AbstractOptimiser)
 
-Zygote.Params(ps::DataParallelParamsWrapper) = ps
-
-Flux.Optimise.update!(opt, xs::DataParallelParamsWrapper, gs) =
-    Flux.Optimise.update!(opt, xs.params, gs)
-
-function DataParallelFluxModel(model, gpu_devices::Union{Nothing,Vector{Int}} = nothing)
-    if !Initialized()
-        @warn "FluxMPI not initialised, initialising now"
-        Init(; gpu_devices = gpu_devices)
+Wrap the `optimiser` in a `DistributedOptimiser`. Before updating the
+parameters, this averages the gradients across the processes using
+non-blocking Allreduce
+"""
+struct DistributedOptimiser{B,O<:AbstractOptimiser}
+    optimiser::O
+    # TODO: Check if non-blocking calls are better. For small scale problems blocking calls are faster
+    #       but that could be because we are unable to use Iallreduce with CuArrays
+    function DistributedOptimiser(optimiser::O; blocking_communication::Bool = true) where {O<:AbstractOptimiser}
+        return new{blocking_communication,O}(optimiser)
     end
+end
 
-    comm = MPI.COMM_WORLD
-    comm_size = MPI.Comm_size(comm)
+_get_request_type(ps::Params) = _get_request_type(first(ps))
+_get_request_type(::CuArray) = JuliaTaskRequest
+_get_request_type(::AbstractArray) = Request
 
-    p, re = Flux.destructure(model)
-    safe_bcast!(p, 0, MPI.COMM_WORLD)
-    model = re(p)
-
-    if CUDA.functional()
-        model = model |> gpu
+function update!(opt::DistributedOptimiser{false}, xs::Params, gs)
+    request_count = 0
+    requests = Vector{_get_request_type(xs)}(undef, length(xs))
+    # Add the gradients across all processes
+    s = total_workers()
+    for x in xs
+        g = gs[x]
+        g === nothing && continue
+        # Average out the gradients
+        g ./= s
+        _, request = Iallreduce!(g, +, MPI.COMM_WORLD)
+        request_count += 1
+        requests[request_count] = request
     end
-
-    return DataParallelFluxModel{Val(comm_size),typeof(model)}(model)
+    # Wait for all the non-blocking operations to be completed
+    Waitall!(requests[1:request_count])
+    # Update the parameters
+    update!(opt.optimiser, xs, gs)
+    return
 end
 
-(dp::DataParallelFluxModel)(args...; kwargs...) = dp.model(args...; kwargs...)
-
-
-function flatten_grads(ps::DataParallelParamsWrapper, gs::Zygote.Grads)
-    idx = 1
-    for (i, p) in enumerate(gs.params)
-        l = ps.lengths[i]
-        ps.buffer[idx:idx+l-1] .= vec(gs[p])
-        idx += l
+function update!(opt::DistributedOptimiser{true}, xs::Params, gs)
+    # Add the gradients across all processes
+    s = total_workers()
+    for x in xs
+        g = gs[x]
+        g === nothing && continue
+        # Average out the gradients
+        g ./= s
+        Allreduce!(g, +, MPI.COMM_WORLD)
     end
-    return ps.buffer
+    # Update the parameters
+    update!(opt.optimiser, xs, gs)
+    return
 end
 
-function unflatten_grads!(
-    gs::Zygote.Grads,
-    ps::DataParallelParamsWrapper,
-    gs_flattened::AbstractArray,
-)
-    idx = 1
-    for (i, p) in enumerate(gs.params)
-        l = ps.lengths[i]
-        gs[p] = reshape(gs_flattened[idx:idx+l-1], ps.sizes[i])
-        idx += l
+"""
+    broadcast_parameters(model; root_rank::Integer = 0, blocking_communication::Bool = true)
+    broadcast_parameters(ps::Params; root_rank::Integer = 0, blocking_communication::Bool = true)
+
+Sync the parameters of the model across all processes.
+"""
+broadcast_parameters(model; kwargs...) = broadcast_parameters(params(model); kwargs...)
+
+function broadcast_parameters(ps::Params; root_rank::Integer=0, blocking_communication::Bool = true)
+    @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
+    if blocking_communication
+        requests = Vector{Request}(undef, length(ps))
+        for (i, p) in enumerate(ps)
+            _, request = Ibcast!(p, root_rank, MPI.COMM_WORLD)
+            requests[i] = request
+        end
+        Waitall!(requests)
+    else
+        Bcast!.(ps, root_rank, MPI.COMM_WORLD)
     end
-    return gs
+    return
 end
 
+# TODO: Function to sync optimiser state. Will become easier once Optimisers.jl becomes
+#       the standard
 
-function Zygote.withgradient(func, ps::DataParallelParamsWrapper)
-    comm = MPI.COMM_WORLD
-    size = MPI.Comm_size(comm)
+"""
+    clean_println(args...; kwargs...)
 
-    y, back = Zygote.pullback(func, ps.params)
-    gs = back(Zygote.sensitivity(y))
-
-    gs_flattened = flatten_grads(ps, gs) ./ size
-
-    gs_flattened = safe_allreduce!(gs_flattened, +, comm)
-
-    return (val = y, grad = unflatten_grads!(gs, ps, gs_flattened))
-end
-
-Zygote.withgradient(func, ps::DataParallelParamsWrapper{Val{1}}) =
-    Zygote.withgradient(func, ps.params)
-
-Zygote.gradient(func, ps::DataParallelParamsWrapper) =
-    Zygote.withgradient(func, ps).grad
-
-
-function DataParallelDataLoader(
-    data;
-    batchsize = 1,
-    shuffle = false,
-    partial = true,
-    rng = GLOBAL_RNG,
-)
-    batchsize > 0 || throw(ArgumentError("Need positive batchsize"))
-
-    comm = MPI.COMM_WORLD
-    size = MPI.Comm_size(comm)
-    rank = MPI.Comm_rank(comm)
-
-    _n = Flux.Data._nobs(data)
-
-    partitions = collect(
-        Iterators.partition(Random.shuffle(rng, 1:_n), Int(ceil(_n / size))),
-    )
-    idxs = collect(partitions[rank+1])
-
-    n = length(idxs)
-
-    if n < batchsize
-        @warn "Number of observations less than batchsize, decreasing the batchsize to $n"
-        batchsize = n
+Add `rank` and `size` information to the printed statement
+"""
+function clean_println(args...; kwargs...)
+    rank = local_rank()
+    size = total_workers()
+    for r in 0:(size - 1)
+        r == rank && println("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+        MPI.Barrier(MPI.COMM_WORLD)
     end
-
-    imax = partial ? n : n - batchsize + 1
-    return Flux.Data.DataLoader(
-        data,
-        batchsize,
-        n,
-        partial,
-        imax,
-        idxs,
-        shuffle,
-        rng,
-    )
+    return
 end
 
+@nograd clean_println
 
-function safe_allreduce!(v::AbstractArray, op, comm)
-    MPI.Allreduce!(v, op, comm)
-    return v
-end
+"""
+    clean_print(args...; kwargs...)
 
-function safe_allreduce!(v::CuArray, op, comm)
-    @static if !mpi_is_cuda_aware[]
-        # Do transfer on CPU since MPI is not CUDA aware
-        v = v |> cpu
+Add `rank` and `size` information to the printed statement
+"""
+function clean_print(args...; kwargs...)
+    rank = local_rank()
+    size = total_workers()
+    for r in 0:(size - 1)
+        r == rank && print("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+        MPI.Barrier(MPI.COMM_WORLD)
     end
-    MPI.Allreduce!(v, op, comm)
-    @static if !mpi_is_cuda_aware[]
-        v = v |> gpu
-    end
-    return v
+    return
 end
 
-function safe_bcast!(v::AbstractArray, root::Integer, comm)
-    MPI.Bcast!(v, root, comm)
-    return v
-end
+@nograd clean_print
 
-function safe_bcast!(v::CuArray, root::Integer, comm)
-    @static if !mpi_is_cuda_aware[]
-        # Do transfer on CPU since MPI is not CUDA aware
-        v = v |> cpu
-    end
-    MPI.Bcast!(v, root, comm)
-    @static if !mpi_is_cuda_aware[]
-        v = v |> gpu
-    end
-    return v
-end
-
-function safe_reduce!(v::AbstractArray, op, root::Integer, comm)
-    MPI.Reduce!(v, op, root, comm)
-    return v
-end
-
-function safe_reduce!(v::CuArray, op, root::Integer, comm)
-    @static if !mpi_is_cuda_aware[]
-        # Do transfer on CPU since MPI is not CUDA aware
-        v = v |> cpu
-    end
-    MPI.Reduce!(v, op, root, comm)
-    @static if !mpi_is_cuda_aware[]
-        v = v |> gpu
-    end
-    return v
-end
-
-
-export DataParallelFluxModel, DataParallelDataLoader
-export safe_allreduce!, safe_bcast!, safe_reduce!
+export MPIExtensions, MPI
+export local_rank, total_workers, DistributedOptimiser, broadcast_parameters, clean_print, clean_println
 
 end
