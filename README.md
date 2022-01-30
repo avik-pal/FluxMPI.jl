@@ -52,12 +52,15 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 
 ## Usage Instructions
 
-There are essentially 4 main steps to remember:
+There are essentially 6 main steps to remember:
 
 1. Initialize FluxMPI (`FluxMPI.Init()`)
 2. Sync Model Parameters (`broadcast_parameters(model; root_rank)`)
-3. Wrap Optimizer in `DistributedOptimizer`
-4. Change logging code to check for `local_rank() == 0`
+3. Dealing with DataLoading. There are two options:
+   1. Manually distribute the data across the processes. If all the processes are using the same data, it becomes quite pointless
+   2. Use `DistributedDataContainer`. It takes the `data` and splits it evenly across all the processes. The only assumption is that the `data` is compatible with [LearnBase.jl](https://github.com/JuliaML/LearnBase.jl) API. The returned container is compatible with [LearnBase.jl](https://github.com/JuliaML/LearnBase.jl) so [DataLoaders.jl](https://lorenzoh.github.io/DataLoaders.jl/dev/) should work by default.
+4. Wrap Optimizer in `DistributedOptimizer`
+5. Change logging code to check for `local_rank() == 0`
 
 Finally, start the code using `mpiexecjl -n <np> julia --project=. <filename>.jl`
 
@@ -79,6 +82,7 @@ All functions have dedicated docstrings. Use the help mode in REPL to access the
 1. `Init`
 2. `DistributedOptimiser`
 3. `broadcast_parameters`
+4. `DistributedDataContainer`
 
 ## Known Caveats
 

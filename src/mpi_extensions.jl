@@ -1,7 +1,8 @@
 module MPIExtensions
 
 using MPI
-import MPI: Buffer, Comm, MPI_Comm, MPIPtr, MPI_Request, Request, RBuffer, libmpi, Op, MPI_Op, MPI_Datatype, @mpichk, free, Allreduce!, IN_PLACE
+import MPI: Buffer, Comm, MPI_Comm, MPIPtr, MPI_Request, Request, RBuffer, libmpi, Op, MPI_Op, MPI_Datatype, @mpichk,
+            free, Allreduce!, IN_PLACE
 import Base: wait
 import MPI: Wait!, Waitall!
 import Flux: cpu, gpu
@@ -80,7 +81,7 @@ Mostly a hack to work around asynchronous MPI calls using CuArray.
     without any deprecation warning
 """
 mutable struct JuliaTaskRequest
-    task
+    task::Any
 end
 
 wait(req::JuliaTaskRequest) = wait(req.task)
@@ -107,23 +108,20 @@ function Iallreduce!(rbuf::RBuffer, op::Union{Op,MPI_Op}, comm::Comm)
         # int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
         #                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
         #                    MPI_Request * request)
-        @mpichk ccall((:MPI_Iallreduce, libmpi), Cint, (MPIPtr, MPIPtr, Cint, MPI_Datatype, MPI_Op, MPI_Comm, Ptr{MPI_Request}),
-                    rbuf.senddata, rbuf.recvdata, rbuf.count, rbuf.datatype, op, comm, req)
+        @mpichk ccall((:MPI_Iallreduce, libmpi), Cint,
+                      (MPIPtr, MPIPtr, Cint, MPI_Datatype, MPI_Op, MPI_Comm, Ptr{MPI_Request}), rbuf.senddata,
+                      rbuf.recvdata, rbuf.count, rbuf.datatype, op, comm, req)
         req.buffer = rbuf
         finalizer(free, req)
         return rbuf.recvdata, req
     end
 end
 
-Iallreduce!(rbuf::RBuffer, op, comm::Comm) =
-    Iallreduce!(rbuf, Op(op, eltype(rbuf)), comm)
+Iallreduce!(rbuf::RBuffer, op, comm::Comm) = Iallreduce!(rbuf, Op(op, eltype(rbuf)), comm)
 
-Iallreduce!(sendbuf, recvbuf, op, comm::Comm) =
-    Iallreduce!(RBuffer(sendbuf, recvbuf), op, comm)
+Iallreduce!(sendbuf, recvbuf, op, comm::Comm) = Iallreduce!(RBuffer(sendbuf, recvbuf), op, comm)
 
-Iallreduce!(buf, op, comm::Comm) =
-    Iallreduce!(IN_PLACE, buf, op, comm)
-
+Iallreduce!(buf, op, comm::Comm) = Iallreduce!(IN_PLACE, buf, op, comm)
 
 """
     Ibcast!(buf, root, comm)
@@ -137,8 +135,8 @@ function Ibcast!(buf::Buffer, root::Integer, comm::Comm)
     req = Request()
     # int MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype, int root,
     #                MPI_Comm comm, MPI_Request *request)
-    @mpichk ccall((:MPI_Ibcast, libmpi), Cint, (MPIPtr, Cint, MPI_Datatype, Cint, MPI_Comm, Ptr{MPI_Request}),
-                  buf.data, buf.count, buf.datatype, root, comm, req)
+    @mpichk ccall((:MPI_Ibcast, libmpi), Cint, (MPIPtr, Cint, MPI_Datatype, Cint, MPI_Comm, Ptr{MPI_Request}), buf.data,
+                  buf.count, buf.datatype, root, comm, req)
     req.buffer = buf
     finalizer(free, req)
     return buf.data, req
