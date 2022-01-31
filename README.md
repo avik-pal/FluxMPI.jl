@@ -50,6 +50,15 @@ end
 
 Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 
+## Examples
+
+* [Image Classification using FastAI.jl](/examples/fastai/train.jl): Only a few changes are needed for the integration
+  * Install `FluxTraining#ap/improvements` -- I am happy to upstream the changes but they are a bit opinionated...
+  * Remember to do `FluxMPI.Init()`
+  * Convert data -> `data = DistributedDataContainer(data)`
+  * Finally pass in the optimizer `optimizer = DistributedOptimiser(ADAM())`
+  * Start the code with `mpiexecjl -n <np> julia --project=examples/fastai/ train.jl`
+
 ## Usage Instructions
 
 There are essentially 6 main steps to remember:
