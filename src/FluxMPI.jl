@@ -12,6 +12,7 @@ using Zygote: @nograd, Params
 using LearnBase: ObsDim
 import MLDataUtils: nobs, getobs
 import Flux.Optimise: update!, apply!
+import Base: getproperty, setproperty!
 
 include("common.jl")
 include("synchronize.jl")
