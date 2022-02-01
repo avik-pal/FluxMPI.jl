@@ -9,8 +9,10 @@ using Flux: params
 using Flux.Optimise: AbstractOptimiser
 using MPI: Request, Waitall!, Allreduce!, Bcast!
 using Zygote: @nograd, Params
+using LearnBase: ObsDim
 import MLDataUtils: nobs, getobs
 import Flux.Optimise: update!, apply!
+import Base: getproperty, setproperty!
 
 include("common.jl")
 include("synchronize.jl")

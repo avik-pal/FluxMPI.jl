@@ -14,6 +14,22 @@ struct DistributedOptimiser{B,O<:AbstractOptimiser}
     end
 end
 
+function getproperty(opt::DistributedOptimiser, name::Symbol)
+    if name == :optimiser || name == :optimizer
+        return getfield(opt, :optimiser)
+    else
+        return getproperty(opt.optimiser, name)
+    end
+end
+
+function setproperty!(opt::DistributedOptimiser, name::Symbol, x::Any)
+    if name == :optimiser || name == :optimizer
+        error("Cannot update `optimiser` property of `DistributedOptimiser`")
+    else
+        setproperty!(opt.optimiser, name, x)
+    end
+end
+
 _get_request_type(ps::Params) = _get_request_type(first(ps))
 _get_request_type(::CuArray) = JuliaTaskRequest
 _get_request_type(::AbstractArray) = Request

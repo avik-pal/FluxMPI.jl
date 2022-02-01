@@ -17,7 +17,7 @@ If calling this function, no need to call `MPI.Init` first.
 """
 function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=false)
     if Initialized()
-        verbose && @warn "FluxMPI already initialized; Skipping..."
+        verbose && clean_println("FluxMPI already initialized; Skipping...")
         return
     end
 
@@ -32,10 +32,10 @@ function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=f
         else
             gpu_devices[rank + 1]
         end
-        verbose && @info "Rank $rank: Using GPU $gpu_device"
+        verbose && clean_println("Using GPU $gpu_device")
         CUDA.device!(gpu_device)
     else
-        verbose && @info "Rank $rank: Using CPU"
+        verbose && clean_println("Using CPU")
     end
     FluxMPI_initialized[] = true
     return
@@ -61,8 +61,16 @@ Get the total number of workers.
 Add `rank` and `size` information to the printed statement
 """
 function clean_println(args...; kwargs...)
+    if !Initialized()
+        println(args...; kwargs...)
+        return
+    end
     rank = local_rank()
     size = total_workers()
+    if size == 1
+        println(args...; kwargs...)
+        return
+    end
     for r in 0:(size - 1)
         r == rank && println("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
         MPI.Barrier(MPI.COMM_WORLD)
@@ -78,8 +86,16 @@ end
 Add `rank` and `size` information to the printed statement
 """
 function clean_print(args...; kwargs...)
+    if !Initialized()
+        print(args...; kwargs...)
+        return
+    end
     rank = local_rank()
     size = total_workers()
+    if size == 1
+        print(args...; kwargs...)
+        return
+    end
     for r in 0:(size - 1)
         r == rank && print("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
         MPI.Barrier(MPI.COMM_WORLD)
