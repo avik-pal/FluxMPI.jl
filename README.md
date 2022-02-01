@@ -100,4 +100,4 @@ All functions have dedicated docstrings. Use the help mode in REPL to access the
 
 ## Other Data Parallel Training Libraries
 
-* [ResNetImageNet.jl](`https://github.com/DhairyaLGandhi/ResNetImageNet.jl`)
+* [ResNetImageNet.jl](https://github.com/DhairyaLGandhi/ResNetImageNet.jl)
