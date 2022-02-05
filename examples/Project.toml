@@ -1,0 +1,5 @@
+[deps]
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+FluxMPI = "acf642fa-ee0e-513a-b9d5-bcd150f7ec3b"
+Metalhead = "dbeba491-748d-5e0e-a39e-b530a07fa0cc"
