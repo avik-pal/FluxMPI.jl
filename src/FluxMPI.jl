@@ -21,7 +21,7 @@ import Zygote: @nograd, Params
 include("common.jl")
 
 # synchronize! Model Parameters -- Works with both Zygote.Params which Flux uses and NamedTuples for ExplicitFluxLayers
-include("synchronize!.jl")
+include("synchronize.jl")
 
 # Implementation of Distributed Optimiser
 include("optimiser.jl")
