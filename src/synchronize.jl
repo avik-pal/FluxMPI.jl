@@ -28,6 +28,9 @@ end
 
 synchronize!(::Nothing; kwargs...) = nothing
 
+# Synchronizing Symbols should do nothing
+synchronize!(s::Symbol; kwargs...) = s
+
 function synchronize!(l::Leaf; root_rank::Integer=0)
     @set! l.state = synchronize!(l.state; root_rank)
 end
