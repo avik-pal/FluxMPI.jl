@@ -21,9 +21,14 @@ function synchronize!(ps::Union{NamedTuple,Tuple}; root_rank::Integer=0)
     return fmap(x -> synchronize!(x; root_rank), ps)
 end
 
-function synchronize!(x::AbstractArray; root_rank::Integer=0)
+function synchronize!(x::AbstractArray{T}; root_rank::Integer=0) where {T<:Number}
     Bcast!(x, root_rank, MPI.COMM_WORLD)
     return x
+end
+
+# Ideally these things should be Tuples and not arrays
+function synchronize!(x::AbstractArray; root_rank::Integer=0)
+    synchronize!.(x; root_rank)
 end
 
 synchronize!(::Nothing; kwargs...) = nothing
