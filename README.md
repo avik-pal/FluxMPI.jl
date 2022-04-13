@@ -65,7 +65,7 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
   * [Deep Equilibrium Models Paper](https://arxiv.org/abs/1909.01377)
   * [MultiScale Deep Equilibrium Models Paper](https://arxiv.org/abs/2006.08656)
   * [Infinite Time Neural ODE Paper](https://arxiv.org/abs/2201.12240)
-* [Image Classification using FastAI.jl](/examples/fastai/train.jl): Only a few changes are needed for the integration
+* **[BROKEN on Master v0.3]** [Image Classification using FastAI.jl](/examples/fastai/train.jl): Only a few changes are needed for the integration
   * Install `FluxTraining#ap/improvements` -- I am happy to upstream the changes but they are a bit opinionated...
   * Remember to do `FluxMPI.Init()`
   * Convert data -> `data = DistributedDataContainer(data)`
