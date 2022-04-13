@@ -24,3 +24,5 @@ end
 nobs(ddc::DistributedDataContainer) = length(ddc.idxs)
 
 getobs(ddc::DistributedDataContainer, i, ::ObsDim.Undefined) = getobs(ddc.data, ddc.idxs[i])
+
+getobs(ddc::DistributedDataContainer, i) = getobs(ddc.data, ddc.idxs[i])

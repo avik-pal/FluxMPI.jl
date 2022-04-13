@@ -2,24 +2,44 @@
 #       the standard
 
 """
-broadcast_parameters(model; root_rank::Integer = 0, blocking_communication::Bool = true)
-broadcast_parameters(ps::Params; root_rank::Integer = 0, blocking_communication::Bool = true)
+    synchronize!(model; root_rank::Integer = 0)
+    synchronize!(ps::Params; root_rank::Integer = 0)
+    synchronize!(ps::NamedTuple; root_rank::Integer = 0)
 
 Sync the parameters of the model across all processes.
 """
-broadcast_parameters(model; kwargs...) = broadcast_parameters(params(model); kwargs...)
+synchronize!(model; kwargs...) = synchronize!(Flux.params(model); kwargs...)
 
-function broadcast_parameters(ps::Params; root_rank::Integer=0, blocking_communication::Bool=true)
+function synchronize!(ps::Params; root_rank::Integer=0)
     @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
-    if blocking_communication
-        requests = Vector{Request}(undef, length(ps))
-        for (i, p) in enumerate(ps)
-            _, request = Ibcast!(p, root_rank, MPI.COMM_WORLD)
-            requests[i] = request
-        end
-        Waitall!(requests)
-    else
-        Bcast!.(ps, root_rank, MPI.COMM_WORLD)
-    end
-    return
+    Bcast!.(ps, root_rank, (MPI.COMM_WORLD,))
+    return ps
+end
+
+function synchronize!(ps::Union{NamedTuple,Tuple}; root_rank::Integer=0)
+    @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
+    return fmap(x -> synchronize!(x; root_rank), ps)
+end
+
+function synchronize!(x::AbstractArray{T}; root_rank::Integer=0) where {T<:Number}
+    Bcast!(x, root_rank, MPI.COMM_WORLD)
+    return x
+end
+
+# Ideally these things should be Tuples and not arrays
+function synchronize!(x::AbstractArray; root_rank::Integer=0)
+    synchronize!.(x; root_rank)
+end
+
+synchronize!(::Nothing; kwargs...) = nothing
+
+# Synchronizing Symbols should do nothing
+synchronize!(s::Symbol; kwargs...) = s
+
+function synchronize!(l::Leaf; root_rank::Integer=0)
+    @set! l.state = synchronize!(l.state; root_rank)
+end
+
+function synchronize!(x::Number; root_rank::Integer=0)
+    return Bcast!([x], root_rank, MPI.COMM_WORLD)[1]
 end
