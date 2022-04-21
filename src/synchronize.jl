@@ -1,6 +1,3 @@
-# TODO: Function to sync optimiser state. Will become easier once Optimisers.jl becomes
-#       the standard
-
 """
     synchronize!(model; root_rank::Integer = 0)
     synchronize!(ps::Params; root_rank::Integer = 0)
@@ -24,6 +21,11 @@ end
 function synchronize!(x::AbstractArray{T}; root_rank::Integer=0) where {T<:Number}
     Bcast!(x, root_rank, MPI.COMM_WORLD)
     return x
+end
+
+function synchronize!(x::ComponentArray; root_rank::Integer=0)
+    d = Bcast!(getdata(x), root_rank, MPI.COMM_WORLD)
+    return ComponentArray(d, getaxes(x))
 end
 
 # Ideally these things should be Tuples and not arrays

@@ -7,6 +7,7 @@ using CUDA, MPI
 import .MPIExtensions: Iallreduce!, Ibcast!, JuliaTaskRequest
 
 import Base: getproperty, setproperty!
+import ComponentArrays: ComponentArray, getdata, getaxes
 import Dates: now
 import Flux
 import Functors: fmap
