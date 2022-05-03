@@ -1,7 +1,0 @@
-[deps]
-CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
-FastAI = "5d0beca9-ade8-49ae-ad0b-a3cf890e669f"
-Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
-FluxMPI = "acf642fa-ee0e-513a-b9d5-bcd150f7ec3b"
-FluxTraining = "7bf95e4d-ca32-48da-9824-f0dc5310474f"
-MLDataUtils = "cc2ba9b6-d476-5e6d-8eaf-a92d5412d41d"

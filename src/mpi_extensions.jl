@@ -1,22 +1,41 @@
 module MPIExtensions
 
-using MPI
-import MPI: Buffer, Comm, MPI_Comm, MPIPtr, MPI_Request, Request, RBuffer, libmpi, Op, MPI_Op, MPI_Datatype, @mpichk,
-            free, Allreduce!, IN_PLACE
-import Base: wait
-import MPI: Wait!, Waitall!
-import Flux: cpu, gpu
+import Adapt: adapt
 import CUDA: CuArray
+import MPI: Allreduce!,
+    Buffer,
+    Comm,
+    has_cuda,
+    free,
+    IN_PLACE,
+    libmpi,
+    MPIPtr,
+    MPI_Comm,
+    MPI_Datatype,
+    MPI_Op,
+    MPI_Request,
+    Op,
+    RBuffer,
+    Request,
+    Wait!,
+    Waitall!,
+    @mpichk
+
 
 const mpi_is_cuda_aware = Ref(false)
+
+
+cpu(x::AbstractArray) = adapt(Array, x)
+gpu(x::AbstractArray) = adapt(CuArray, x)
+
 
 function __init__()
     # If using `mpi_is_cuda_aware` anywhere use the @static macro
     # since we anyways need to recompile the code when MPI
     # implementation changes
-    mpi_is_cuda_aware[] = MPI.has_cuda()
+    mpi_is_cuda_aware[] = has_cuda()
     if !mpi_is_cuda_aware[]
-        @warn "MPI Implementation is not CUDA Aware"
+        @warn "MPI Implementation is not CUDA Aware" maxlog=1
     end
 end
 
@@ -71,22 +90,6 @@ function Reduce!(v::CuArray, op::Any, root::Integer, comm::MPI_Comm)
     return v
 end
 
-"""
-    JuliaTaskRequest
-
-Mostly a hack to work around asynchronous MPI calls using CuArray.
-
-!!! warn
-    This is mostly an internal implementation detail and might be removed
-    without any deprecation warning
-"""
-mutable struct JuliaTaskRequest
-    task::Any
-end
-
-wait(req::JuliaTaskRequest) = wait(req.task)
-Wait!(req::JuliaTaskRequest) = wait(req)
-Waitall!(reqs::Vector{JuliaTaskRequest}) = wait.(reqs)
 
 """
     Iallreduce!(sendbuf, recvbuf, op, comm)
@@ -99,22 +102,17 @@ Performs non-blocking elementwise reduction using the operator `op` on the buffe
 the request has been completed. (`MPI.Wait!`)
 """
 function Iallreduce!(rbuf::RBuffer, op::Union{Op,MPI_Op}, comm::Comm)
-    if rbuf.recvdata isa CuArray
-        # Iallreduce! is segfaulting for CuArray. So a hack to circumvent it.
-        task = @async Allreduce!(rbuf, op, comm)
-        return rbuf.recvdata, JuliaTaskRequest(task)
-    else
-        req = Request()
-        # int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
-        #                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
-        #                    MPI_Request * request)
-        @mpichk ccall((:MPI_Iallreduce, libmpi), Cint,
-                      (MPIPtr, MPIPtr, Cint, MPI_Datatype, MPI_Op, MPI_Comm, Ptr{MPI_Request}), rbuf.senddata,
-                      rbuf.recvdata, rbuf.count, rbuf.datatype, op, comm, req)
-        req.buffer = rbuf
-        finalizer(free, req)
-        return rbuf.recvdata, req
-    end
+    # Iallreduce! is segfaulting for CuArray. So a hack to circumvent it.
+    req = Request()
+    # int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
+    #                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,
+    #                    MPI_Request * request)
+    @mpichk ccall((:MPI_Iallreduce, libmpi), Cint,
+                    (MPIPtr, MPIPtr, Cint, MPI_Datatype, MPI_Op, MPI_Comm, Ptr{MPI_Request}), rbuf.senddata,
+                    rbuf.recvdata, rbuf.count, rbuf.datatype, op, comm, req)
+    req.buffer = rbuf
+    finalizer(free, req)
+    return rbuf.recvdata, req
 end
 
 Iallreduce!(rbuf::RBuffer, op, comm::Comm) = Iallreduce!(rbuf, Op(op, eltype(rbuf)), comm)

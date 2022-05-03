@@ -2,21 +2,17 @@ module FluxMPI
 
 include("mpi_extensions.jl")
 
-using CUDA, MPI
-
-import .MPIExtensions: Iallreduce!, Ibcast!, JuliaTaskRequest
-
-import Base: getproperty, setproperty!
+import ChainRulesCore: @non_differentiable
 import ComponentArrays: ComponentArray, getdata, getaxes
+import CUDA
 import Dates: now
-import Flux
 import Functors: fmap
-import LearnBase: ObsDim
-import MLDataUtils: nobs, getobs
-import MPI: Request, Waitall!, Allreduce!, Bcast!
+import MLUtils: getobs
+import MPI
+import MPI: Allreduce!, Barrier, Bcast!, Comm_rank, Comm_size, COMM_WORLD, Request, Waitall!
+import .MPIExtensions: Iallreduce!, Ibcast!
 import Optimisers: Leaf, init, apply!
 import Setfield: @set!
-import Zygote: @nograd, Params
 
 # General Utilities -- Init, Clean Printing
 include("common.jl")
@@ -30,7 +26,6 @@ include("optimiser.jl")
 # Extends LearnBase & MLDataUtils API for Distributed Datasets -- compatible with DataLoaders.jl
 include("data.jl")
 
-export MPIExtensions, MPI
 export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println,
        DistributedDataContainer
 

@@ -1,20 +1,16 @@
 """
-    synchronize!(model; root_rank::Integer = 0)
-    synchronize!(ps::Params; root_rank::Integer = 0)
-    synchronize!(ps::NamedTuple; root_rank::Integer = 0)
+    synchronize!(x::NamedTuple; root_rank::Integer = 0)
+    synchronize!(x::Tuple; root_rank::Integer = 0)
+    synchronize!(x::AbstractArray; root_rank::Integer = 0)
+    synchronize!(x::ComponentArray; root_rank::Integer = 0)
+    synchronize!(x::Nothing; root_rank::Integer = 0)
+    synchronize!(x::Symbol; root_rank::Integer = 0)
+    synchronize!(x::Leaf; root_rank::Integer = 0)
+    synchronize!(x::Number; root_rank::Integer = 0)
 
-Sync the parameters of the model across all processes.
+Synchronize `x` across all processes.
 """
-synchronize!(model; kwargs...) = synchronize!(Flux.params(model); kwargs...)
-
-function synchronize!(ps::Params; root_rank::Integer=0)
-    @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
-    Bcast!.(ps, root_rank, (MPI.COMM_WORLD,))
-    return ps
-end
-
 function synchronize!(ps::Union{NamedTuple,Tuple}; root_rank::Integer=0)
-    @assert 0 <= root_rank <= total_workers() - 1 "Valid `root_rank` Range: [0, $(total_workers() - 1)]"
     return fmap(x -> synchronize!(x; root_rank), ps)
 end
 

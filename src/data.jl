@@ -21,8 +21,6 @@ function DistributedDataContainer(data)
     return DistributedDataContainer(data, idxs)
 end
 
-nobs(ddc::DistributedDataContainer) = length(ddc.idxs)
+Base.length(ddc::DistributedDataContainer) = length(ddc.idxs)
 
-getobs(ddc::DistributedDataContainer, i, ::ObsDim.Undefined) = getobs(ddc.data, ddc.idxs[i])
-
-getobs(ddc::DistributedDataContainer, i) = getobs(ddc.data, ddc.idxs[i])
+Base.getindex(ddc::DistributedDataContainer, i) = getobs(ddc.data, ddc.idxs[i])
