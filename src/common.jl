@@ -22,6 +22,7 @@ function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=f
     end
 
     !MPI.Initialized() && MPI.Init()
+    FluxMPI_initialized[] = true
 
     rank = local_rank()
 
@@ -37,7 +38,7 @@ function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=f
     else
         verbose && clean_println("Using CPU")
     end
-    FluxMPI_initialized[] = true
+
     return
 end
 
@@ -46,14 +47,20 @@ end
 
 Get the rank of the process.
 """
-@inline local_rank() = MPI.Comm_rank(MPI.COMM_WORLD)
+@inline function local_rank()
+    !Initialized() && error("FluxMPI has not been initialized")
+    return Comm_rank(COMM_WORLD)
+end
 
 """
     total_workers()
 
 Get the total number of workers.
 """
-@inline total_workers() = MPI.Comm_size(MPI.COMM_WORLD)
+@inline function total_workers()
+    !Initialized() && error("FluxMPI has not been initialized")
+    return Comm_size(COMM_WORLD)
+end
 
 """
     clean_println(args...; kwargs...)
@@ -62,7 +69,7 @@ Add `rank` and `size` information to the printed statement
 """
 function clean_println(args...; kwargs...)
     if !Initialized()
-        println(args...; kwargs...)
+        println("$(now()) ", args...; kwargs...)
         return
     end
     rank = local_rank()
@@ -73,12 +80,12 @@ function clean_println(args...; kwargs...)
     end
     for r in 0:(size - 1)
         r == rank && println("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
-        MPI.Barrier(MPI.COMM_WORLD)
+        Barrier(COMM_WORLD)
     end
     return
 end
 
-@nograd clean_println
+@non_differentiable clean_println(::Any...)
 
 """
     clean_print(args...; kwargs...)
@@ -87,7 +94,7 @@ Add `rank` and `size` information to the printed statement
 """
 function clean_print(args...; kwargs...)
     if !Initialized()
-        print(args...; kwargs...)
+        print("$(now()) ", args...; kwargs...)
         return
     end
     rank = local_rank()
@@ -98,9 +105,9 @@ function clean_print(args...; kwargs...)
     end
     for r in 0:(size - 1)
         r == rank && print("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
-        MPI.Barrier(MPI.COMM_WORLD)
+        Barrier(COMM_WORLD)
     end
     return
 end
 
-@nograd clean_print
+@non_differentiable clean_print(::Any...)

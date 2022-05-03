@@ -9,23 +9,7 @@ struct DistributedOptimiser{O}
     optimiser::O
 end
 
-function getproperty(opt::DistributedOptimiser, name::Symbol)
-    if name == :optimiser
-        return getfield(opt, :optimiser)
-    else
-        return getproperty(opt.optimiser, name)
-    end
-end
-
-function setproperty!(opt::DistributedOptimiser, name::Symbol, x::Any)
-    if name == :optimiser
-        error("Cannot update `optimiser` property of `DistributedOptimiser`")
-    else
-        setproperty!(opt.optimiser, name, x)
-    end
-end
-
-function apply!(o::DistributedOptimiser{true}, state, x, x̄)
+function apply!(o::DistributedOptimiser, state, x, x̄)
     # Average gradients across all processes
     x̄ ./= total_workers()
     Allreduce!(x̄, +, MPI.COMM_WORLD)
