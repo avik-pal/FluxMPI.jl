@@ -7,7 +7,7 @@ import ComponentArrays: ComponentArray, getdata, getaxes
 import CUDA
 import Dates: now
 import Functors: fmap
-import MLUtils: getobs
+import MLUtils: getobs, numobs
 import MPI
 import MPI: Allreduce!, Barrier, Bcast!, Comm_rank, Comm_size, COMM_WORLD, Request, Waitall!
 import .MPIExtensions: Iallreduce!, Ibcast!

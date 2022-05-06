@@ -11,7 +11,7 @@ struct DistributedDataContainer
 end
 
 function DistributedDataContainer(data)
-    total_size = nobs(data)
+    total_size = numobs(data)
     split_across = total_workers()
     size_per_process = Int(ceil(total_size / split_across))
 
