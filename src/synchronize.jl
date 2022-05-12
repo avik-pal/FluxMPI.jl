@@ -29,11 +29,6 @@ function synchronize!(x::AbstractArray; root_rank::Integer=0)
     synchronize!.(x; root_rank)
 end
 
-synchronize!(::Nothing; kwargs...) = nothing
-
-# Synchronizing Symbols should do nothing
-synchronize!(s::Symbol; kwargs...) = s
-
 function synchronize!(l::Leaf; root_rank::Integer=0)
     @set! l.state = synchronize!(l.state; root_rank)
 end
@@ -41,3 +36,7 @@ end
 function synchronize!(x::Number; root_rank::Integer=0)
     return Bcast!([x], root_rank, MPI.COMM_WORLD)[1]
 end
+
+# If we don't know what to synchronize, we don't do it
+# -- Symbols, Nothing, Missing, Val, etc.
+synchronize!(x; kwargs...) = x
