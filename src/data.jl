@@ -24,8 +24,8 @@ Base.length(ddc::DistributedDataContainer) = length(ddc.idxs)
 Base.getindex(ddc::DistributedDataContainer, i) = getobs(ddc.data, ddc.idxs[i])
 
 # TODO: Needed to support DataLoaders.jl till (if?) it transitions to MLUtils
-MLDataUtils.nobs(data::DistributedDataContainer) = MLUtils.numobs(data)
+MLDataUtils.nobs(data::DistributedDataContainer) = numobs(data)
 
-MLDataUtils.getobs(data::DistributedDataContainer, i, ::LearnBase.ObsDim.Undefined) = MLUtils.getobs(data, i)
+MLDataUtils.getobs(data::DistributedDataContainer, i, ::LearnBase.ObsDim.Undefined) = getobs(data, i)
 
-MLDataUtils.getobs(data::DistributedDataContainer, i) = MLUtils.getobs(data, i)
+MLDataUtils.getobs(data::DistributedDataContainer, i) = getobs(data, i)
