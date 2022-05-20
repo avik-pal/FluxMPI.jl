@@ -52,6 +52,8 @@ Get the rank of the process.
     return Comm_rank(COMM_WORLD)
 end
 
+@non_differentiable local_rank()
+
 """
     total_workers()
 
@@ -61,6 +63,8 @@ Get the total number of workers.
     !Initialized() && error("FluxMPI has not been initialized")
     return Comm_size(COMM_WORLD)
 end
+
+@non_differentiable total_workers()
 
 """
     clean_println(args...; kwargs...)
@@ -79,7 +83,10 @@ function clean_println(args...; kwargs...)
         return
     end
     for r in 0:(size - 1)
-        r == rank && println("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+        if r == rank
+            println("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+            flush(stdout)
+        end
         Barrier(COMM_WORLD)
     end
     return
@@ -104,7 +111,10 @@ function clean_print(args...; kwargs...)
         return
     end
     for r in 0:(size - 1)
-        r == rank && print("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+        if r == rank
+            print("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+            flush(stdout)
+        end
         Barrier(COMM_WORLD)
     end
     return

@@ -100,9 +100,11 @@ Performs non-blocking elementwise reduction using the operator `op` on the buffe
 
 `recvbuf` and an MPI_Request object are returned. The value in `recvbuf` is only valid after
 the request has been completed. (`MPI.Wait!`)
+
+!!! warning
+    OpenMPI doesn't support Iallreduce! with CUDA. See https://github.com/open-mpi/ompi/issues/9845
 """
 function Iallreduce!(rbuf::RBuffer, op::Union{Op,MPI_Op}, comm::Comm)
-    # Iallreduce! is segfaulting for CuArray. So a hack to circumvent it.
     req = Request()
     # int MPI_Iallreduce(const void *sendbuf, void *recvbuf, int count,
     #                    MPI_Datatype datatype, MPI_Op op, MPI_Comm comm,

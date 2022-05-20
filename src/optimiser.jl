@@ -2,18 +2,20 @@
     DistributedOptimiser(optimiser)
 
 Wrap the `optimiser` in a `DistributedOptimiser`. Before updating the
-parameters, this averages the gradients across the processes using
+parameters, this adds the gradients across the processes using
 non-blocking Allreduce
+
+!!! note
+    Remember to scale the loss function by `1 / total_workers()` to ensure
+    that the gradients are correctly averaged
 """
 struct DistributedOptimiser{O}
     optimiser::O
 end
 
-function apply!(o::DistributedOptimiser, state, x, x̄)
-    # Average gradients across all processes
-    x̄ ./= total_workers()
-    Allreduce!(x̄, +, MPI.COMM_WORLD)
-    apply!(o.optimiser, state, x, x̄)
+function apply!(o::DistributedOptimiser, state, x, y)
+    Allreduce!(y, +, MPI.COMM_WORLD)
+    apply!(o.optimiser, state, x, y)
 end
 
 init(o::DistributedOptimiser, x::AbstractArray) = init(o.optimiser, x)

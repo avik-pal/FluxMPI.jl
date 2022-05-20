@@ -20,6 +20,10 @@ Latest development version:
 ] add FluxMPI#main
 ```
 
+### Setup Instructions for CUDA-aware MPI
+
+OpenMPI has extensive instructions on building [CUDA-aware MPI](https://www-lb.open-mpi.org/faq/?category=buildcuda). Next rebuild MPI.jl using these [instructions](https://juliaparallel.org/MPI.jl/stable/configuration/#Using-a-system-provided-MPI)
+
 ## Quick Start
 
 ```julia
@@ -118,6 +122,10 @@ All functions have dedicated docstrings. Use the help mode in REPL to access the
 4. `DistributedDataContainer`
 
 ## Changelog
+
+### v0.5
+
+* `DistributedOptimiser` no longer averages the gradients. Instead, the values are summed across the processes. To ensure averaging divide the loss by `total_workers()`
 
 ### v0.4
 
