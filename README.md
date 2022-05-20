@@ -20,10 +20,6 @@ Latest development version:
 ] add FluxMPI#main
 ```
 
-### Setup Instructions for CUDA-aware MPI
-
-OpenMPI has extensive instructions on building [CUDA-aware MPI](https://www-lb.open-mpi.org/faq/?category=buildcuda). Next rebuild MPI.jl using these [instructions](https://juliaparallel.org/MPI.jl/stable/configuration/#Using-a-system-provided-MPI)
-
 ## Quick Start
 
 ```julia
@@ -80,21 +76,17 @@ Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
 ## Examples
 
 * [Deep Equilibrium Models](https://github.com/SciML/FastDEQ.jl) -- Deep Implicit Neural Networks & Infinite Time Neural ODEs
-  * [Deep Equilibrium Models Paper](https://arxiv.org/abs/1909.01377)
-  * [MultiScale Deep Equilibrium Models Paper](https://arxiv.org/abs/2006.08656)
-  * [Infinite Time Neural ODE Paper](https://arxiv.org/abs/2201.12240)
 * [ImageNet Training with Lux.jl](https://github.com/avik-pal/Lux.jl/tree/main/examples/ImageNet)
-
 
 ## Usage Instructions
 
 There are essentially 6 main steps to remember:
 
 1. Initialize FluxMPI (`FluxMPI.Init()`)
-2. Sync Model Parameters (`FluxMPI.synchronize!(ps; root_rank)`)
+2. Sync Model Parameters and States (`FluxMPI.synchronize!(ps; root_rank)`)
 3. Dealing with DataLoading. There are two options:
     1. Manually distribute the data across the processes. If all the processes are using the same data, it becomes quite pointless
-    2. Use `DistributedDataContainer`. It takes the `data` and splits it evenly across all the processes. The only assumption is that the `data` is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) API. The returned container is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) so [DataLoaders.jl](https://lorenzoh.github.io/DataLoaders.jl/dev/) should work by default.
+    2. Use `DistributedDataContainer`. It takes the `data` and splits it evenly across all the processes. The only assumption is that the `data` is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) API. The returned container is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) and [DataLoaders.jl](https://lorenzoh.github.io/DataLoaders.jl/dev/).
 4. Wrap Optimizer in `DistributedOptimizer`
 5. Sync the optimizer state across the processes
 6. Change logging code to check for `local_rank() == 0`
@@ -105,27 +97,47 @@ Finally, start the code using `mpiexecjl -n <np> julia --project=. <filename>.jl
 
 All functions have dedicated docstrings. Use the help mode in REPL to access them
 
-### MPIExtensions
-
-**NOTE: Functions are not exported**
-
-1. `Reduce!`
-2. `Allreduce!`
-3. `Bcast!`
-4. `Iallreduce!`
-
-### FluxMPI
-
 1. `FluxMPI.Init` (**not exported since name is very common**)
 2. `DistributedOptimiser`
 3. `FluxMPI.synchronize!` (**not exported since name is very common**)
 4. `DistributedDataContainer`
+5. `MPIExtensions` (**none of the functions are exported**)
+   1. `FluxMPI.allreduce!`
+   2. `FluxMPI.bcast!`
+   3. `FluxMPI.reduce!`
+   4. `FluxMPI.Iallreduce!`
+   5. `FluxMPI.Ibcast!`
+
+## CUDA-aware MPI
+
+### Setup
+
+OpenMPI has extensive instructions on building [CUDA-aware MPI](https://www-lb.open-mpi.org/faq/?category=buildcuda). Next rebuild MPI.jl using these [instructions](https://juliaparallel.org/MPI.jl/stable/configuration/#Using-a-system-provided-MPI)
+
+Additionally, make sure to set `JULIA_CUDA_USE_MEMPOOL=none`.
+
+### Should you use CUDA-aware MPI?
+
+I would recommend **not** using this atm, since `JULIA_CUDA_USE_MEMPOOL=none` will severely slow down your code (*~2-3x* for most workloads I tested). Instead setup `MPI.jl` using you system provided MPI and set `FLUXMPI_DISABLE_CUDAMPI_SUPPORT=true` (this was significantly more efficient for the *20 Million* Parameter models in `FastDEQ.jl`)
 
 ## Changelog
 
 ### v0.5
 
+#### v0.5.1
+
+* Internal `MPIExtensions` functions renamed
+  * `Allreduce!` --> `allreduce!`
+  * `Bcast!` --> `bcast!`
+  * `Reduce!` --> `reduce!`
+* CUDA-unaware MPI bug resolved https://github.com/avik-pal/Lux.jl/issues/18
+* Disable CUDA-aware MPI support from `FluxMPI` using `FLUXMPI_DISABLE_CUDAMPI_SUPPORT=true`
+* Temporarily re-added dependencies on `MLDataUtils` and `LearnBase` to ensure `DataLoaders.jl` still works -- This will be dropped in a future release
+
+#### v0.5.0
+
 * `DistributedOptimiser` no longer averages the gradients. Instead, the values are summed across the processes. To ensure averaging divide the loss by `total_workers()`
+* `rrule`s and `frule`s defined for `local_rank()` and `total_workers` -- they can now be safely used inside loss functions.
 
 ### v0.4
 
@@ -139,7 +151,3 @@ All functions have dedicated docstrings. Use the help mode in REPL to access the
 
 * `broadcast_parameters` has been renamed to `FluxMPI.synchronize!` since it synchronize!s a lot more than trainable parameters now.
 * DistributedOptimiser is no longer tied with Flux. We can essentially deal with any training as long as it is compatible with [Optimisers.jl](https://github.com/FluxML/Optimisers.jl)
-
-## Known Caveats
-
-1. `Iallreduce!` might segfault for `CuArray`

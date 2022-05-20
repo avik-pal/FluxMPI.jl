@@ -7,10 +7,12 @@ import ComponentArrays: ComponentArray, getdata, getaxes
 import CUDA
 import Dates: now
 import Functors: fmap
+import LearnBase
+import MLDataUtils
 import MLUtils: getobs, numobs
 import MPI
-import MPI: Allreduce!, Barrier, Bcast!, Comm_rank, Comm_size, COMM_WORLD, Request, Waitall!
-import .MPIExtensions: Iallreduce!, Ibcast!
+import MPI: Barrier, Comm_rank, Comm_size, COMM_WORLD
+import .MPIExtensions: allreduce!, bcast!, reduce!, Iallreduce!, Ibcast!
 import Optimisers: Leaf, init, apply!
 import Setfield: @set!
 
@@ -26,7 +28,6 @@ include("optimiser.jl")
 # Extends LearnBase & MLDataUtils API for Distributed Datasets -- compatible with DataLoaders.jl
 include("data.jl")
 
-export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println,
-       DistributedDataContainer
+export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println, DistributedDataContainer
 
 end

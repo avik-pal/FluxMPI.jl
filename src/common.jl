@@ -24,6 +24,10 @@ function Init(; gpu_devices::Union{Nothing,Vector{Int}}=nothing, verbose::Bool=f
     !MPI.Initialized() && MPI.Init()
     FluxMPI_initialized[] = true
 
+    if verbose && total_workers() == 1
+        @warn "Using FluxMPI with only 1 worker. It might be faster to run the code without MPI" maxlog=1
+    end
+
     rank = local_rank()
 
     if CUDA.functional()

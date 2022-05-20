@@ -14,8 +14,8 @@ struct DistributedOptimiser{O}
 end
 
 function apply!(o::DistributedOptimiser, state, x, y)
-    Allreduce!(y, +, MPI.COMM_WORLD)
-    apply!(o.optimiser, state, x, y)
+    y_ = allreduce!(y, +, MPI.COMM_WORLD)
+    apply!(o.optimiser, state, x, y_)
 end
 
 init(o::DistributedOptimiser, x::AbstractArray) = init(o.optimiser, x)

@@ -1,9 +1,7 @@
 """
     DistributedDataContainer(data)
 
-`data` must be compatible with `LearnBase` interface. The returned container is
-compatible with `LearnBase` interface and is used to partition the dataset across
-the available processes.
+`data` must be compatible with `LearnBase` interface. The returned container is compatible with `LearnBase` interface and is used to partition the dataset across the available processes.
 """
 struct DistributedDataContainer
     data::Any
@@ -24,3 +22,10 @@ end
 Base.length(ddc::DistributedDataContainer) = length(ddc.idxs)
 
 Base.getindex(ddc::DistributedDataContainer, i) = getobs(ddc.data, ddc.idxs[i])
+
+# TODO: Needed to support DataLoaders.jl till (if?) it transitions to MLUtils
+MLDataUtils.nobs(data::DistributedDataContainer) = MLUtils.numobs(data)
+
+MLDataUtils.getobs(data::DistributedDataContainer, i, ::LearnBase.ObsDim.Undefined) = MLUtils.getobs(data, i)
+
+MLDataUtils.getobs(data::DistributedDataContainer, i) = MLUtils.getobs(data, i)

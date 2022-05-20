@@ -15,12 +15,12 @@ function synchronize!(ps::Union{NamedTuple,Tuple}; root_rank::Integer=0)
 end
 
 function synchronize!(x::AbstractArray{T}; root_rank::Integer=0) where {T<:Number}
-    Bcast!(x, root_rank, MPI.COMM_WORLD)
+    bcast!(x, root_rank, MPI.COMM_WORLD)
     return x
 end
 
 function synchronize!(x::ComponentArray; root_rank::Integer=0)
-    d = Bcast!(getdata(x), root_rank, MPI.COMM_WORLD)
+    d = bcast!(getdata(x), root_rank, MPI.COMM_WORLD)
     return ComponentArray(d, getaxes(x))
 end
 
@@ -34,7 +34,7 @@ function synchronize!(l::Leaf; root_rank::Integer=0)
 end
 
 function synchronize!(x::Number; root_rank::Integer=0)
-    return Bcast!([x], root_rank, MPI.COMM_WORLD)[1]
+    return bcast!([x], root_rank, MPI.COMM_WORLD)[1]
 end
 
 # If we don't know what to synchronize, we don't do it
