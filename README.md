@@ -87,7 +87,9 @@ There are essentially 6 main steps to remember:
 3. Dealing with DataLoading. There are two options:
     1. Manually distribute the data across the processes. If all the processes are using the same data, it becomes quite pointless
     2. Use `DistributedDataContainer`. It takes the `data` and splits it evenly across all the processes. The only assumption is that the `data` is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) API. The returned container is compatible with [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) and [DataLoaders.jl](https://lorenzoh.github.io/DataLoaders.jl/dev/).
-4. Wrap Optimizer in `DistributedOptimizer`
+4. Use either of the following APIs:
+   1. Wrap Optimiser in `DistributedOptimiser`
+   2. Add `allreduce_gradients(gs::NamedTuple)` before `Optimisers.update` call **(available from v0.5.3)**
 5. Sync the optimizer state across the processes
 6. Change logging code to check for `local_rank() == 0`
 
@@ -99,9 +101,10 @@ All functions have dedicated docstrings. Use the help mode in REPL to access the
 
 1. `FluxMPI.Init` (**not exported since name is very common**)
 2. `DistributedOptimiser`
-3. `FluxMPI.synchronize!` (**not exported since name is very common**)
-4. `DistributedDataContainer`
-5. `MPIExtensions` (**none of the functions are exported**)
+3. `allreduce_gradients` (**available from v0.5.3**)
+4. `FluxMPI.synchronize!` (**not exported since name is very common**)
+5. `DistributedDataContainer`
+6. `MPIExtensions` (**none of the functions are exported**)
    1. `FluxMPI.allreduce!`
    2. `FluxMPI.bcast!`
    3. `FluxMPI.reduce!`
@@ -123,6 +126,12 @@ I would recommend **not** using this atm, since `JULIA_CUDA_USE_MEMPOOL=none` wi
 ## Changelog
 
 ### v0.5
+
+#### v0.5.3
+
+* Introduces a new API for gradient synchronization
+  * Don't wrap in `DistributedOptimiser`
+  * Instead just add a line `allreduce_gradients(gs::NamedTuple)`
 
 #### v0.5.1
 

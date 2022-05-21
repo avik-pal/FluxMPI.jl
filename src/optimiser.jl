@@ -19,3 +19,27 @@ function apply!(o::DistributedOptimiser, state, x, y)
 end
 
 init(o::DistributedOptimiser, x::AbstractArray) = init(o.optimiser, x)
+
+
+"""
+    allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
+"""
+function allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
+    if on_gpu
+        # Transfer data to CPU since OpenMPI Iallreduce! doesn't work for CUDA
+        gs = fmap(cpu, gs)
+    end
+    requests = MPI.Request[]
+    function nonblocking_reduce_gradients(g)
+        g, req = Iallreduce!(g, +, MPI.COMM_WORLD)
+        push!(requests, req)
+        return g
+    end
+    gs = fmap(nonblocking_reduce_gradients, gs)
+    MPI.Waitall!(requests)
+    if on_gpu
+        # Transfer data back to GPU
+        gs = fmap(gpu, gs)
+    end
+    return gs
+end

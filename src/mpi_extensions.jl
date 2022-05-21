@@ -52,7 +52,7 @@ function Iallreduce!(rbuf::MPI.RBuffer, op::Union{MPI.Op,MPI.MPI_Op}, comm::MPI.
         req,
     )
     req.buffer = rbuf
-    finalizer(free, req)
+    finalizer(MPI.free, req)
     return rbuf.recvdata, req
 end
 
@@ -85,7 +85,7 @@ function Ibcast!(buf::MPI.Buffer, root::Integer, comm::MPI.Comm)
         req,
     )
     req.buffer = buf
-    finalizer(free, req)
+    finalizer(MPI.free, req)
     return buf.data, req
 end
 

@@ -12,7 +12,7 @@ import MLDataUtils
 import MLUtils: getobs, numobs
 import MPI
 import MPI: Barrier, Comm_rank, Comm_size, COMM_WORLD
-import .MPIExtensions: allreduce!, bcast!, reduce!, Iallreduce!, Ibcast!
+import .MPIExtensions: allreduce!, bcast!, cpu, gpu, reduce!, Iallreduce!, Ibcast!
 import Optimisers: Leaf, init, apply!
 import Setfield: @set!
 
@@ -28,6 +28,6 @@ include("optimiser.jl")
 # Extends LearnBase & MLDataUtils API for Distributed Datasets -- compatible with DataLoaders.jl
 include("data.jl")
 
-export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println, DistributedDataContainer
+export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println, DistributedDataContainer, allreduce_gradients
 
 end
