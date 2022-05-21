@@ -7,6 +7,10 @@ using MPI: MPI
 const mpi_is_cuda_aware = Ref(false)
 
 # Data Movement between CPU and GPU. `Lux` & `Flux` have much better support for this but this is all we need here
+# If not an abstract array don't do anything
+# Maybe we want to have a central repository containing these device transfer utilities
+cpu(x) = x
+gpu(x) = x
 cpu(x::AbstractArray) = Adapt.adapt(Array, x)
 gpu(x::AbstractArray) = Adapt.adapt(CUDA.CuArray, x)
 

@@ -30,7 +30,8 @@ function allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
         gs = fmap(cpu, gs)
     end
     requests = MPI.Request[]
-    function nonblocking_reduce_gradients(g)
+    nonblocking_reduce_gradients(g) = g
+    function nonblocking_reduce_gradients(g::AbstractArray)
         g, req = Iallreduce!(g, +, MPI.COMM_WORLD)
         push!(requests, req)
         return g
