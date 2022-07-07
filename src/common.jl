@@ -90,7 +90,7 @@ for print_fn in (:println, :print)
       end
       for r in 0:(size - 1)
         if r == rank
-          $(print_fn)("$(now()) [$(rank) / $(size)] ", args...; kwargs...)
+          $(print_fn)("$(Dates.now()) [$(rank) / $(size)] ", args...; kwargs...)
           flush(stdout)
         end
         MPI.Barrier(MPI.COMM_WORLD)

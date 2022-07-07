@@ -14,7 +14,8 @@ cpu(x::AbstractArray) = Adapt.adapt(Array, x)
 gpu(x::AbstractArray) = Adapt.adapt(CUDA.CuArray, x)
 
 function __init__()
-  # If using `mpi_is_cuda_aware` anywhere use the @static macro since we anyways need to recompile the code when MPI implementation changes
+  # If using `mpi_is_cuda_aware` anywhere use the @static macro since we anyways need to
+  # recompile the code when MPI implementation changes
   disable_cuda_aware_support = parse(Bool,
                                      get(ENV, "FLUXMPI_DISABLE_CUDAMPI_SUPPORT", "false"))
   mpi_is_cuda_aware[] = !disable_cuda_aware_support && MPI.has_cuda()

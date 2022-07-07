@@ -9,7 +9,7 @@ include("common.jl")
 include("synchronize.jl")
 
 # Implementation of Distributed Optimiser
-include("optimiser.jl")
+include("optimizer.jl")
 
 # Support for MLUtils.jl DataLoader
 include("data.jl")

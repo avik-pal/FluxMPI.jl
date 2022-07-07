@@ -16,7 +16,7 @@ the gradients across the processes using non-blocking Allreduce
     Remember to scale the loss function by `1 / total_workers()` to ensure
     that the gradients are correctly averaged
 """
-struct DistributedOptimizer{O}
+struct DistributedOptimizer{O} <: Optimisers.AbstractRule
   optimizer::O
 end
 
@@ -48,7 +48,7 @@ containers of multiple parameter arrays.
 function allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
   if on_gpu
     # Transfer data to CPU since OpenMPI Iallreduce! doesn't work for CUDA
-    gs = Functors.fmap(cpu, gs)
+    gs = Functors.fmap(MPIExtensions.cpu, gs)
   end
 
   requests = MPI.Request[]
@@ -64,7 +64,7 @@ function allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
 
   if on_gpu
     # Transfer data back to GPU
-    gs = fmap(gpu, gs)
+    gs = Functors.fmap(MPIExtensions.gpu, gs)
   end
 
   return gs
