@@ -2,6 +2,10 @@
 CurrentModule = FluxMPI
 ```
 
+```@index
+Pages = ["api.md"]
+```
+
 ## Data Helpers
 
 ```@docs
@@ -47,10 +51,4 @@ FluxMPI.allreduce_gradients
 
 ```@docs
 FluxMPI.synchronize!
-```
-
-## Index
-
-```@index
-Pages = ["api.md"]
 ```
