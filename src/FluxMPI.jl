@@ -2,32 +2,19 @@ module FluxMPI
 
 include("mpi_extensions.jl")
 
-import ChainRulesCore: @non_differentiable
-import ComponentArrays: ComponentArray, getdata, getaxes
-import CUDA
-import Dates: now
-import Functors: fmap
-import LearnBase
-import MLDataUtils
-import MLUtils: getobs, numobs
-import MPI
-import MPI: Barrier, Comm_rank, Comm_size, COMM_WORLD
-import .MPIExtensions: allreduce!, bcast!, cpu, gpu, reduce!, Iallreduce!, Ibcast!
-import Optimisers: Leaf, init, apply!
-import Setfield: @set!
-
 # General Utilities -- Init, Clean Printing
 include("common.jl")
 
-# synchronize! Model Parameters -- Works with both Zygote.Params which Flux uses and NamedTuples for ExplicitFluxLayers
+# synchronize!
 include("synchronize.jl")
 
 # Implementation of Distributed Optimiser
-include("optimiser.jl")
+include("optimizer.jl")
 
-# Extends LearnBase & MLDataUtils API for Distributed Datasets -- compatible with DataLoaders.jl
+# Support for MLUtils.jl DataLoader
 include("data.jl")
 
-export local_rank, total_workers, DistributedOptimiser, clean_print, clean_println, DistributedDataContainer, allreduce_gradients
+export local_rank, total_workers, DistributedOptimizer, clean_print, clean_println,
+       DistributedDataContainer, allreduce_gradients
 
 end

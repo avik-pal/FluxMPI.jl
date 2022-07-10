@@ -1,0 +1,8 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterMarkdown = "997ab1e6-3595-5248-9280-8efb232c3433"
+FluxMPI = "acf642fa-ee0e-513a-b9d5-bcd150f7ec3b"
+
+[compat]
+Documenter = "0.27"
+DocumenterMarkdown = "0.2"
