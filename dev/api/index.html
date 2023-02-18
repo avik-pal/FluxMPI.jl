@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://avik-pal.github.io/FluxMPI.jl/api/">
       
+      
+        <link rel="prev" href="../guide/">
+      
+      
+        <link rel="next" href="../common_gotchas/">
+      
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.13">
     
     
       
@@ -23,13 +29,13 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.1d29e8d0.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ffa9267a.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
-        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
       
       
+
     
     
     
@@ -52,10 +58,11 @@
     
       <link rel="stylesheet" href="../css/pandas-dataframe.css">
     
-    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
+    
     
     
   </head>
@@ -123,7 +130,6 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          
           <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
@@ -131,7 +137,6 @@
             </label>
           
         
-          
           
           <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="amber"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
@@ -158,7 +163,7 @@
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -170,7 +175,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -180,10 +185,10 @@
     
       <div class="md-header__source">
         
-<a href="https://github.com/avik-pal/FluxMPI.jl" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/avik-pal/FluxMPI.jl" title="" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     avik-pal/FluxMPI.jl
@@ -192,7 +197,7 @@
 
 <a href="https://twitter.com/avikpal1410" title="Go to Twitter" class="md-source">
   <div class="md-source__icon md-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
   </div>
   <div class="md-source__repository">
     @avikpal1410
@@ -223,9 +228,7 @@
                     
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="FluxMPI.jl" class="md-nav__button md-logo" aria-label="FluxMPI.jl" data-md-component="logo">
       
@@ -238,10 +241,10 @@
   
     <div class="md-nav__source">
       
-<a href="https://github.com/avik-pal/FluxMPI.jl" title="Go to repository" class="md-source" data-md-component="source">
+<a href="https://github.com/avik-pal/FluxMPI.jl" title="" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     avik-pal/FluxMPI.jl
@@ -250,7 +253,7 @@
 
 <a href="https://twitter.com/avikpal1410" title="Go to Twitter" class="md-source">
   <div class="md-source__icon md-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
   </div>
   <div class="md-source__repository">
     @avikpal1410
@@ -284,22 +287,21 @@
   
   
     
-      
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-        <label class="md-nav__link" for="__nav_2">
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
           Examples
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Examples" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_2">
           <span class="md-nav__icon md-icon"></span>
           Examples
@@ -314,6 +316,20 @@
     <li class="md-nav__item">
       <a href="../examples/lux/" class="md-nav__link">
         Usage with Lux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/flux/" class="md-nav__link">
+        Usage with Flux
       </a>
     </li>
   
@@ -336,22 +352,21 @@
   
   
     
-      
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-        <label class="md-nav__link" for="__nav_3">
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
           Manual
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Manual" data-md-level="1">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           Manual
@@ -381,7 +396,7 @@
   
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
@@ -422,29 +437,16 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mpiextensions" class="md-nav__link">
-    MPIExtensions
-  </a>
-  
-    <nav class="md-nav" aria-label="MPIExtensions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#blocking-communication-wrappers" class="md-nav__link">
-    Blocking Communication Wrappers
+  <a href="#mpiextensions-blocking-communication-wrappers" class="md-nav__link">
+    MPIExtensions: Blocking Communication Wrappers
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#non-blocking-communication" class="md-nav__link">
-    Non-Blocking Communication
+      
+        <li class="md-nav__item">
+  <a href="#mpiextensions-non-blocking-communication" class="md-nav__link">
+    MPIExtensions: Non-Blocking Communication
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -458,6 +460,13 @@
         <li class="md-nav__item">
   <a href="#synchronization" class="md-nav__link">
     Synchronization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
   </a>
   
 </li>
@@ -498,11 +507,85 @@
               </div>
             
             
-          
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
               
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data-helpers" class="md-nav__link">
+    Data Helpers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-functions" class="md-nav__link">
+    General Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mpiextensions-blocking-communication-wrappers" class="md-nav__link">
+    MPIExtensions: Blocking Communication Wrappers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mpiextensions-non-blocking-communication" class="md-nav__link">
+    MPIExtensions: Non-Blocking Communication
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optimization" class="md-nav__link">
+    Optimization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#synchronization" class="md-nav__link">
+    Synchronization
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
+                  
 
 
   <h1>API Reference</h1>
@@ -510,17 +593,18 @@
 <ul>
 <li><a href="./#FluxMPI.DistributedDataContainer"><code>FluxMPI.DistributedDataContainer</code></a></li>
 <li><a href="./#FluxMPI.DistributedOptimizer"><code>FluxMPI.DistributedOptimizer</code></a></li>
+<li><a href="./#FluxMPI.Iallreduce!"><code>FluxMPI.Iallreduce!</code></a></li>
+<li><a href="./#FluxMPI.Ibcast!"><code>FluxMPI.Ibcast!</code></a></li>
 <li><a href="./#FluxMPI.Init"><code>FluxMPI.Init</code></a></li>
 <li><a href="./#FluxMPI.Initialized"><code>FluxMPI.Initialized</code></a></li>
-<li><a href="./#FluxMPI.MPIExtensions.Iallreduce!"><code>FluxMPI.MPIExtensions.Iallreduce!</code></a></li>
-<li><a href="./#FluxMPI.MPIExtensions.Ibcast!"><code>FluxMPI.MPIExtensions.Ibcast!</code></a></li>
-<li><a href="./#FluxMPI.MPIExtensions.allreduce!"><code>FluxMPI.MPIExtensions.allreduce!</code></a></li>
-<li><a href="./#FluxMPI.MPIExtensions.bcast!"><code>FluxMPI.MPIExtensions.bcast!</code></a></li>
-<li><a href="./#FluxMPI.MPIExtensions.reduce!"><code>FluxMPI.MPIExtensions.reduce!</code></a></li>
+<li><a href="./#FluxMPI.allreduce!"><code>FluxMPI.allreduce!</code></a></li>
 <li><a href="./#FluxMPI.allreduce_gradients"><code>FluxMPI.allreduce_gradients</code></a></li>
-<li><a href="./#FluxMPI.clean_print"><code>FluxMPI.clean_print</code></a></li>
-<li><a href="./#FluxMPI.clean_println"><code>FluxMPI.clean_println</code></a></li>
+<li><a href="./#FluxMPI.bcast!"><code>FluxMPI.bcast!</code></a></li>
+<li><a href="./#FluxMPI.disable_cudampi_support"><code>FluxMPI.disable_cudampi_support</code></a></li>
+<li><a href="./#FluxMPI.fluxmpi_print"><code>FluxMPI.fluxmpi_print</code></a></li>
+<li><a href="./#FluxMPI.fluxmpi_println"><code>FluxMPI.fluxmpi_println</code></a></li>
 <li><a href="./#FluxMPI.local_rank"><code>FluxMPI.local_rank</code></a></li>
+<li><a href="./#FluxMPI.reduce!"><code>FluxMPI.reduce!</code></a></li>
 <li><a href="./#FluxMPI.synchronize!"><code>FluxMPI.synchronize!</code></a></li>
 <li><a href="./#FluxMPI.total_workers"><code>FluxMPI.total_workers</code></a></li>
 </ul>
@@ -529,81 +613,78 @@
 <h2 id="data-helpers">Data Helpers<a class="headerlink" href="#data-helpers" title="Permanent link">¤</a></h2>
 <p><a id='FluxMPI.DistributedDataContainer' href='#FluxMPI.DistributedDataContainer'>#</a>
 <strong><code>FluxMPI.DistributedDataContainer</code></strong> &mdash; <em>Type</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DistributedDataContainer</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">DistributedDataContainer</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div>
 <p><code>data</code> must be compatible with <code>MLUtils</code> interface. The returned container is compatible with <code>MLUtils</code> interface and is used to partition the dataset across the available processes.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/data.jl#L1-L7' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/data.jl#L1-L7' class='documenter-source'>source</a><br></p>
 <p><a id='General-Functions'></a></p>
 <p><a id='General-Functions-1'></a></p>
 <h2 id="general-functions">General Functions<a class="headerlink" href="#general-functions" title="Permanent link">¤</a></h2>
 <p><a id='FluxMPI.Init' href='#FluxMPI.Init'>#</a>
 <strong><code>FluxMPI.Init</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">Init</span><span class="p">(;</span><span class="w"> </span><span class="n">gpu_devices</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Nothing</span><span class="p">,</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nothing</span><span class="p">,</span><span class="w"> </span><span class="n">verbose</span><span class="o">::</span><span class="kt">Bool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Init</span><span class="p">(;</span><span class="w"> </span><span class="n">gpu_devices</span><span class="o">::</span><span class="kt">Union</span><span class="p">{</span><span class="kt">Nothing</span><span class="p">,</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Int</span><span class="p">}}</span><span class="o">=</span><span class="nb">nothing</span><span class="p">,</span><span class="w"> </span><span class="n">verbose</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
 </code></pre></div>
 <p>Setup <code>FluxMPI</code>. If GPUs are available and CUDA is functional, each rank is allocated a GPU in a round-robin fashion.</p>
 <p>If calling this function, no need to call <code>MPI.Init</code> first.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L13-L20' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L8-L15' class='documenter-source'>source</a><br></p>
 <p><a id='FluxMPI.Initialized' href='#FluxMPI.Initialized'>#</a>
 <strong><code>FluxMPI.Initialized</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">Initialized</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Initialized</span><span class="p">()</span>
 </code></pre></div>
 <p>Has FluxMPI been initialized?</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L6-L10' class='documenter-source'>source</a><br></p>
-<p><a id='FluxMPI.clean_print' href='#FluxMPI.clean_print'>#</a>
-<strong><code>FluxMPI.clean_print</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">clean_print</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L1-L5' class='documenter-source'>source</a><br></p>
+<p><a id='FluxMPI.fluxmpi_print' href='#FluxMPI.fluxmpi_print'>#</a>
+<strong><code>FluxMPI.fluxmpi_print</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fluxmpi_print</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <p>Add <code>rank</code> and <code>size</code> information to the printed statement</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L112-L116' class='documenter-source'>source</a><br></p>
-<p><a id='FluxMPI.clean_println' href='#FluxMPI.clean_println'>#</a>
-<strong><code>FluxMPI.clean_println</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">clean_println</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L107-L111' class='documenter-source'>source</a><br></p>
+<p><a id='FluxMPI.fluxmpi_println' href='#FluxMPI.fluxmpi_println'>#</a>
+<strong><code>FluxMPI.fluxmpi_println</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fluxmpi_println</span><span class="p">(</span><span class="n">args</span><span class="o">...</span><span class="p">;</span><span class="w"> </span><span class="n">kwargs</span><span class="o">...</span><span class="p">)</span>
 </code></pre></div>
 <p>Add <code>rank</code> and <code>size</code> information to the printed statement</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L105-L109' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L100-L104' class='documenter-source'>source</a><br></p>
 <p><a id='FluxMPI.local_rank' href='#FluxMPI.local_rank'>#</a>
 <strong><code>FluxMPI.local_rank</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">local_rank</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">local_rank</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the rank of the process.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L52-L56' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L47-L51' class='documenter-source'>source</a><br></p>
 <p><a id='FluxMPI.total_workers' href='#FluxMPI.total_workers'>#</a>
 <strong><code>FluxMPI.total_workers</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">total_workers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">total_workers</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the total number of workers.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/common.jl#L64-L68' class='documenter-source'>source</a><br></p>
-<p><a id='MPIExtensions'></a></p>
-<p><a id='MPIExtensions-1'></a></p>
-<h2 id="mpiextensions">MPIExtensions<a class="headerlink" href="#mpiextensions" title="Permanent link">¤</a></h2>
-<p><a id='Blocking-Communication-Wrappers'></a></p>
-<p><a id='Blocking-Communication-Wrappers-1'></a></p>
-<h3 id="blocking-communication-wrappers">Blocking Communication Wrappers<a class="headerlink" href="#blocking-communication-wrappers" title="Permanent link">¤</a></h3>
-<p><a id='FluxMPI.MPIExtensions.allreduce!' href='#FluxMPI.MPIExtensions.allreduce!'>#</a>
-<strong><code>FluxMPI.MPIExtensions.allreduce!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">allreduce!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/common.jl#L59-L63' class='documenter-source'>source</a><br></p>
+<p><a id='MPIExtensions:-Blocking-Communication-Wrappers'></a></p>
+<p><a id='MPIExtensions:-Blocking-Communication-Wrappers-1'></a></p>
+<h2 id="mpiextensions-blocking-communication-wrappers">MPIExtensions: Blocking Communication Wrappers<a class="headerlink" href="#mpiextensions-blocking-communication-wrappers" title="Permanent link">¤</a></h2>
+<p><a id='FluxMPI.allreduce!' href='#FluxMPI.allreduce!'>#</a>
+<strong><code>FluxMPI.allreduce!</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">allreduce!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
 </code></pre></div>
 <p>Perform <code>MPI.Allreduce!</code> ensuring that CuArrays are safely transfered to CPU if CUDA-aware MPI is unavailable/disabled.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/mpi_extensions.jl#L94-L99' class='documenter-source'>source</a><br></p>
-<p><a id='FluxMPI.MPIExtensions.bcast!' href='#FluxMPI.MPIExtensions.bcast!'>#</a>
-<strong><code>FluxMPI.MPIExtensions.bcast!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">bcast!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/mpi_extensions.jl#L74-L79' class='documenter-source'>source</a><br></p>
+<p><a id='FluxMPI.bcast!' href='#FluxMPI.bcast!'>#</a>
+<strong><code>FluxMPI.bcast!</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">bcast!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
 </code></pre></div>
 <p>Perform <code>MPI.Bcast!</code> ensuring that CuArrays are safely transfered to CPU if CUDA-aware MPI is unavailable/disabled.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/mpi_extensions.jl#L116-L121' class='documenter-source'>source</a><br></p>
-<p><a id='FluxMPI.MPIExtensions.reduce!' href='#FluxMPI.MPIExtensions.reduce!'>#</a>
-<strong><code>FluxMPI.MPIExtensions.reduce!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">reduce!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/mpi_extensions.jl#L96-L101' class='documenter-source'>source</a><br></p>
+<p><a id='FluxMPI.reduce!' href='#FluxMPI.reduce!'>#</a>
+<strong><code>FluxMPI.reduce!</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">reduce!</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
 </code></pre></div>
 <p>Perform <code>MPI.Reduce!</code> ensuring that CuArrays are safely transfered to CPU if CUDA-aware MPI is unavailable/disabled.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/mpi_extensions.jl#L138-L143' class='documenter-source'>source</a><br></p>
-<p><a id='Non-Blocking-Communication'></a></p>
-<p><a id='Non-Blocking-Communication-1'></a></p>
-<h3 id="non-blocking-communication">Non-Blocking Communication<a class="headerlink" href="#non-blocking-communication" title="Permanent link">¤</a></h3>
-<p><a id='FluxMPI.MPIExtensions.Iallreduce!' href='#FluxMPI.MPIExtensions.Iallreduce!'>#</a>
-<strong><code>FluxMPI.MPIExtensions.Iallreduce!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">Iallreduce!</span><span class="p">(</span><span class="n">sendbuf</span><span class="p">,</span><span class="w"> </span><span class="n">recvbuf</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
-<span class="n">Iallreduce!</span><span class="p">(</span><span class="n">sendrecvbuf</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/mpi_extensions.jl#L118-L123' class='documenter-source'>source</a><br></p>
+<p><a id='MPIExtensions:-Non-Blocking-Communication'></a></p>
+<p><a id='MPIExtensions:-Non-Blocking-Communication-1'></a></p>
+<h2 id="mpiextensions-non-blocking-communication">MPIExtensions: Non-Blocking Communication<a class="headerlink" href="#mpiextensions-non-blocking-communication" title="Permanent link">¤</a></h2>
+<p><a id='FluxMPI.Iallreduce!' href='#FluxMPI.Iallreduce!'>#</a>
+<strong><code>FluxMPI.Iallreduce!</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">Iallreduce!</span><span class="p">(</span><span class="n">sendbuf</span><span class="p">,</span><span class="w"> </span><span class="n">recvbuf</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
+<span class="n">Iallreduce!</span><span class="p">(</span><span class="n">sendrecvbuf</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
 </code></pre></div>
 <p>Performs non-blocking elementwise reduction using the operator <code>op</code> on the buffer <code>sendbuf</code>. <code>sendbuf</code> can also be a scalar, in which case <code>recvbuf</code> will be a value of the same type.</p>
 <p><code>recvbuf</code> and an MPI_Request object are returned. The value in <code>recvbuf</code> is only valid after the request has been completed. (<code>MPI.Wait!</code>)</p>
@@ -611,20 +692,20 @@
 <p class="admonition-title">Warning</p>
 <p>OpenMPI doesn't support Iallreduce! with CUDA. See <a href="https://github.com/open-mpi/ompi/issues/9845">this issue</a>.</p>
 </div>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/mpi_extensions.jl#L31-L45' class='documenter-source'>source</a><br></p>
-<p><a id='FluxMPI.MPIExtensions.Ibcast!' href='#FluxMPI.MPIExtensions.Ibcast!'>#</a>
-<strong><code>FluxMPI.MPIExtensions.Ibcast!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">Ibcast!</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"></span>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/mpi_extensions.jl#L11-L25' class='documenter-source'>source</a><br></p>
+<p><a id='FluxMPI.Ibcast!' href='#FluxMPI.Ibcast!'>#</a>
+<strong><code>FluxMPI.Ibcast!</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">Ibcast!</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
 </code></pre></div>
 <p>Non-blocking broadcast of the buffer <code>buf</code> to all processes in <code>comm</code>.</p>
 <p><code>recvbuf</code> and an MPI_Request object are returned. The value in <code>recvbuf</code> is only valid after the request has been completed. (<code>MPI.Wait!</code>)</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/mpi_extensions.jl#L70-L77' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/mpi_extensions.jl#L50-L57' class='documenter-source'>source</a><br></p>
 <p><a id='Optimization'></a></p>
 <p><a id='Optimization-1'></a></p>
 <h2 id="optimization">Optimization<a class="headerlink" href="#optimization" title="Permanent link">¤</a></h2>
 <p><a id='FluxMPI.DistributedOptimizer' href='#FluxMPI.DistributedOptimizer'>#</a>
 <strong><code>FluxMPI.DistributedOptimizer</code></strong> &mdash; <em>Type</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 </code></pre></div>
 <p>Wrap the <code>optimizer</code> in a <code>DistributedOptimizer</code>. Before updating the parameters, this adds the gradients across the processes using non-blocking Allreduce</p>
 <p><strong>Arguments</strong></p>
@@ -635,10 +716,10 @@
 <p class="admonition-title">Note</p>
 <p>Remember to scale the loss function by <code>1 / total_workers()</code> to ensure that the gradients are correctly averaged</p>
 </div>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/optimizer.jl#L4-L18' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/optimizer.jl#L1-L15' class='documenter-source'>source</a><br></p>
 <p><a id='FluxMPI.allreduce_gradients' href='#FluxMPI.allreduce_gradients'>#</a>
 <strong><code>FluxMPI.allreduce_gradients</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">allreduce_gradients</span><span class="p">(</span><span class="n">gs</span><span class="o">::</span><span class="kt">NamedTuple</span><span class="p">;</span><span class="w"> </span><span class="n">on_gpu</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="n">CUDA</span><span class="o">.</span><span class="n">functional</span><span class="p">())</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">allreduce_gradients</span><span class="p">(</span><span class="n">gs</span><span class="o">::</span><span class="kt">NamedTuple</span><span class="p">;</span><span class="w"> </span><span class="n">on_gpu</span><span class="o">::</span><span class="kt">Bool</span><span class="o">=</span><span class="n">CUDA</span><span class="o">.</span><span class="n">functional</span><span class="p">())</span>
 </code></pre></div>
 <p>Allreduce the gradients. This uses a non-blocking API which will be efficient for large containers of multiple parameter arrays.</p>
 <p><strong>Arguments</strong></p>
@@ -653,69 +734,45 @@
 <ul>
 <li><code>Allreduce</code>d NamedTuple of gradients</li>
 </ul>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/optimizer.jl#L30-L47' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/optimizer.jl#L27-L44' class='documenter-source'>source</a><br></p>
 <p><a id='Synchronization'></a></p>
 <p><a id='Synchronization-1'></a></p>
 <h2 id="synchronization">Synchronization<a class="headerlink" href="#synchronization" title="Permanent link">¤</a></h2>
 <p><a id='FluxMPI.synchronize!' href='#FluxMPI.synchronize!'>#</a>
 <strong><code>FluxMPI.synchronize!</code></strong> &mdash; <em>Function</em>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">NamedTuple</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Tuple</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">AbstractArray</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">ComponentArray</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Nothing</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Symbol</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Leaf</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="o">::</span><span class="kt">Number</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">synchronize!</span><span class="p">(</span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="o">::</span><span class="kt">Integer</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
 <p>Synchronize <code>x</code> across all processes.</p>
-<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/449c519d116b046443ae8177e12b75be21100884/src/synchronize.jl#L4-L15' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/synchronize.jl#L1-L5' class='documenter-source'>source</a><br></p>
+<p><a id='Configuration'></a></p>
+<p><a id='Configuration-1'></a></p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">¤</a></h2>
+<p><a id='FluxMPI.disable_cudampi_support' href='#FluxMPI.disable_cudampi_support'>#</a>
+<strong><code>FluxMPI.disable_cudampi_support</code></strong> &mdash; <em>Function</em>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">disable_cudampi_support</span><span class="p">(;</span><span class="w"> </span><span class="n">disable</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+</code></pre></div>
+<p>Disable CUDA MPI support. Julia Session needs to be restarted for this to take effect.</p>
+<p><a target='_blank' href='https://github.com/avik-pal/FluxMPI.jl/blob/fd1bba87de61ba0ca3976b5866eb0d687efceca6/src/FluxMPI.jl#L42-L46' class='documenter-source'>source</a><br></p>
 
-              
-            </article>
-            
-          </div>
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
         </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
         
       </main>
       
         <footer class="md-footer">
-  
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../guide/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Usage Guide" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              Usage Guide
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../common_gotchas/" class="md-footer__link md-footer__link--next" aria-label="Next: Common Gotchas" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Common Gotchas
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -737,10 +794,11 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "toc.integrate", "header.autohide"], "search": "../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["header.autohide", "navigation.top"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.6c7ad80a.min.js"></script>
+      <script src="../assets/javascripts/bundle.2a6f1dda.min.js"></script>
       
         <script src="../_static/mathjax.js"></script>
       

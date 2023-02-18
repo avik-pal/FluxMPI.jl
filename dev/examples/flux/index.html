@@ -12,20 +12,20 @@
         <meta name="author" content="Avik Pal">
       
       
-        <link rel="canonical" href="https://avik-pal.github.io/FluxMPI.jl/examples/lux/">
+        <link rel="canonical" href="https://avik-pal.github.io/FluxMPI.jl/examples/flux/">
       
       
-        <link rel="prev" href="../..">
+        <link rel="prev" href="../lux/">
       
       
-        <link rel="next" href="../flux/">
+        <link rel="next" href="../../guide/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.13">
     
     
       
-        <title>Usage with Lux - FluxMPI.jl</title>
+        <title>Usage with Flux - FluxMPI.jl</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#usage-example-with-luxjl" class="md-skip">
+        <a href="#usage-example-with-fluxjl" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Usage with Lux
+              Usage with Flux
             
           </span>
         </div>
@@ -314,6 +314,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../lux/" class="md-nav__link">
+        Usage with Lux
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -326,12 +340,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Usage with Lux
+          Usage with Flux
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Usage with Lux
+        Usage with Flux
       </a>
       
         
@@ -409,20 +423,6 @@
   
 </nav>
       
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../flux/" class="md-nav__link">
-        Usage with Flux
-      </a>
     </li>
   
 
@@ -608,18 +608,18 @@
                   
 
 
-<p><a id='Usage-example-with-Lux.jl'></a></p>
-<p><a id='Usage-example-with-Lux.jl-1'></a></p>
-<h1 id="usage-example-with-luxjl">Usage example with Lux.jl<a class="headerlink" href="#usage-example-with-luxjl" title="Permanent link">¤</a></h1>
-<p><a href="http://lux.csail.mit.edu/stable/">Lux.jl</a> is a deep learning framework which provides a functional design to implement neural networks in Julia. If you are not familiar with Lux, first check-out <a href="http://lux.csail.mit.edu/stable/examples/generated/beginner/Basics/main/">this tutorial</a> before proceeding.</p>
+<p><a id='Usage-example-with-FLux.jl'></a></p>
+<p><a id='Usage-example-with-FLux.jl-1'></a></p>
+<h1 id="usage-example-with-fluxjl">Usage example with FLux.jl<a class="headerlink" href="#usage-example-with-fluxjl" title="Permanent link">¤</a></h1>
+<p><a href="http://lux.csail.mit.edu/stable/">Flux.jl</a> is one of the defacto deep learning framework in Julia.</p>
 <p><a id='Step-0:-Import-the-necessary-packages'></a></p>
 <p><a id='Step-0:-Import-the-necessary-packages-1'></a></p>
 <h2 id="step-0-import-the-necessary-packages">Step 0: Import the necessary packages<a class="headerlink" href="#step-0-import-the-necessary-packages" title="Permanent link">¤</a></h2>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>You can install these packages using <code>using Pkg; Pkg.add.(["CUDA", "Optimisers", "Lux", "Random", "Zygote"])</code></p>
+<p>You can install these packages using <code>using Pkg; Pkg.add.(["CUDA", "Optimisers", "Flux", "Random", "Zygote"])</code></p>
 </div>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">CUDA</span><span class="p">,</span><span class="w"> </span><span class="n">Optimisers</span><span class="p">,</span><span class="w"> </span><span class="n">FluxMPI</span><span class="p">,</span><span class="w"> </span><span class="n">Lux</span><span class="p">,</span><span class="w"> </span><span class="n">Random</span><span class="p">,</span><span class="w"> </span><span class="n">Zygote</span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">CUDA</span><span class="p">,</span><span class="w"> </span><span class="n">Optimisers</span><span class="p">,</span><span class="w"> </span><span class="n">FluxMPI</span><span class="p">,</span><span class="w"> </span><span class="n">Flux</span><span class="p">,</span><span class="w"> </span><span class="n">Random</span><span class="p">,</span><span class="w"> </span><span class="n">Zygote</span>
 </code></pre></div>
 <p><a id='Step-1:-Initialize-FluxMPI.-Not-doing-this-will-segfault-your-code'></a></p>
 <p><a id='Step-1:-Initialize-FluxMPI.-Not-doing-this-will-segfault-your-code-1'></a></p>
@@ -632,12 +632,11 @@
 <h2 id="step-2-sync-model-parameters-and-states">Step 2: Sync Model Parameters and States<a class="headerlink" href="#step-2-sync-model-parameters-and-states" title="Permanent link">¤</a></h2>
 <div class="highlight"><pre><span></span><code><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Chain</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span><span class="w"> </span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span><span class="w"> </span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span>
 <span class="w">              </span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+
 <span class="n">rng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 <span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span><span class="w"> </span><span class="n">local_rank</span><span class="p">())</span>
-<span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Lux</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="o">.|&gt;</span><span class="w"> </span><span class="n">gpu</span>
-
-<span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">ps</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">st</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="c"># Always remember to wrap the model in FluxMPIFluxModel</span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">FluxMPIFluxModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"> </span><span class="n">root_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
 <p><a id='Step-3:-Ensure-data-is-properly-partitioned'></a></p>
 <p><a id='Step-3:-Ensure-data-is-properly-partitioned-1'></a></p>
@@ -650,10 +649,10 @@
 <p><a id='Step-4:-Wrap-the-optimizer-in-<a href="@ref">DistributedOptimizer</a>-1'></a></p>
 <h2 id="step-4-wrap-the-optimizer-in-distributedoptimizer">Step 4: Wrap the optimizer in <a href="../../api/#FluxMPI.DistributedOptimizer"><code>DistributedOptimizer</code></a><a class="headerlink" href="#step-4-wrap-the-optimizer-in-distributedoptimizer" title="Permanent link">¤</a></h2>
 <p>Remember to scale the learning rate by the number of workers <a href="../../api/#FluxMPI.total_workers"><code>total_workers</code></a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">Adam</span><span class="p">(</span><span class="mf">0.001f0</span><span class="p">))</span>
-<span class="n">st_opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">Optimisers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="mf">0.001f0</span><span class="p">))</span>
+<span class="n">st_opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span>
 
-<span class="n">loss</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">st</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">.-</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="n">loss</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">.-</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
 </code></pre></div>
 <p><a id='Step-5:-Synchronize-the-optimizer-state'></a></p>
 <p><a id='Step-5:-Synchronize-the-optimizer-state-1'></a></p>
@@ -664,17 +663,17 @@
 <p><a id='Step-6:-Train-your-model-1'></a></p>
 <h2 id="step-6-train-your-model">Step 6: Train your model<a class="headerlink" href="#step-6-train-your-model" title="Permanent link">¤</a></h2>
 <p>Remember to print using <a href="../../api/#FluxMPI.fluxmpi_println"><code>fluxmpi_println</code></a> or <a href="../../api/#FluxMPI.fluxmpi_print"><code>fluxmpi_print</code></a>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">gs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">gs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">gs_</span><span class="p">)</span>
 
 <span class="n">t1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time</span><span class="p">()</span>
 
 <span class="k">for</span><span class="w"> </span><span class="n">epoch</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">100</span>
-<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">st_opt</span>
-<span class="w">  </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zygote</span><span class="o">.</span><span class="n">pullback</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">st_opt</span>
+<span class="w">  </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zygote</span><span class="o">.</span><span class="n">pullback</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span>
 <span class="w">  </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">fluxmpi_println</span><span class="p">(</span><span class="s">&quot;Epoch </span><span class="si">$epoch</span><span class="s">: Loss </span><span class="si">$l</span><span class="s">&quot;</span><span class="p">)</span>
 <span class="w">  </span><span class="n">gs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back</span><span class="p">(</span><span class="n">one</span><span class="p">(</span><span class="n">l</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
-<span class="w">  </span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">gs</span><span class="p">)</span>
+<span class="w">  </span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">gs</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="n">FluxMPI</span><span class="o">.</span><span class="n">fluxmpi_println</span><span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t1</span><span class="p">)</span>
@@ -683,41 +682,39 @@
 <p><a id='Complete-Script'></a></p>
 <p><a id='Complete-Script-1'></a></p>
 <h2 id="complete-script">Complete Script<a class="headerlink" href="#complete-script" title="Permanent link">¤</a></h2>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">CUDA</span><span class="p">,</span><span class="w"> </span><span class="n">FluxMPI</span><span class="p">,</span><span class="w"> </span><span class="n">Lux</span><span class="p">,</span><span class="w"> </span><span class="n">Optimisers</span><span class="p">,</span><span class="w"> </span><span class="n">Random</span><span class="p">,</span><span class="w"> </span><span class="n">Zygote</span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">CUDA</span><span class="p">,</span><span class="w"> </span><span class="n">FluxMPI</span><span class="p">,</span><span class="w"> </span><span class="n">Flux</span><span class="p">,</span><span class="w"> </span><span class="n">Optimisers</span><span class="p">,</span><span class="w"> </span><span class="n">Random</span><span class="p">,</span><span class="w"> </span><span class="n">Zygote</span>
 
 <span class="n">FluxMPI</span><span class="o">.</span><span class="n">Init</span><span class="p">()</span>
 <span class="n">CUDA</span><span class="o">.</span><span class="n">allowscalar</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span>
 
 <span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Chain</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span><span class="w"> </span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span><span class="w"> </span><span class="n">Dense</span><span class="p">(</span><span class="mi">512</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">tanh</span><span class="p">),</span>
-<span class="w">              </span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">              </span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">gpu</span>
+
 <span class="n">rng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 <span class="n">Random</span><span class="o">.</span><span class="n">seed!</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span><span class="w"> </span><span class="n">local_rank</span><span class="p">())</span>
-<span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Lux</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="o">.|&gt;</span><span class="w"> </span><span class="n">gpu</span>
-
-<span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">ps</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
-<span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">st</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">FluxMPIFluxModel</span><span class="p">(</span><span class="n">model</span><span class="p">);</span><span class="w"> </span><span class="n">root_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">gpu</span>
 <span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">.^</span><span class="w"> </span><span class="mi">2</span>
 
-<span class="n">opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">Adam</span><span class="p">(</span><span class="mf">0.001f0</span><span class="p">))</span>
-<span class="n">st_opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span>
+<span class="n">opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DistributedOptimizer</span><span class="p">(</span><span class="n">Optimisers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="mf">0.001f0</span><span class="p">))</span>
+<span class="n">st_opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span>
 
-<span class="n">loss</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">st</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">.-</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+<span class="n">loss</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">abs2</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">.-</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
 
 <span class="n">st_opt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">synchronize!</span><span class="p">(</span><span class="n">st_opt</span><span class="p">;</span><span class="w"> </span><span class="n">root_rank</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
 
-<span class="n">gs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">gs_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gradient</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">gs_</span><span class="p">)</span>
 
 <span class="n">t1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time</span><span class="p">()</span>
 
 <span class="k">for</span><span class="w"> </span><span class="n">epoch</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="mi">100</span>
-<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">st_opt</span>
-<span class="w">  </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zygote</span><span class="o">.</span><span class="n">pullback</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">)</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">st_opt</span>
+<span class="w">  </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Zygote</span><span class="o">.</span><span class="n">pullback</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">)</span>
 <span class="w">  </span><span class="n">FluxMPI</span><span class="o">.</span><span class="n">fluxmpi_println</span><span class="p">(</span><span class="s">&quot;Epoch </span><span class="si">$epoch</span><span class="s">: Loss </span><span class="si">$l</span><span class="s">&quot;</span><span class="p">)</span>
 <span class="w">  </span><span class="n">gs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back</span><span class="p">(</span><span class="n">one</span><span class="p">(</span><span class="n">l</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
-<span class="w">  </span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"> </span><span class="n">gs</span><span class="p">)</span>
+<span class="w">  </span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Optimisers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">st_opt</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">gs</span><span class="p">)</span>
 <span class="k">end</span>
 
 <span class="n">FluxMPI</span><span class="o">.</span><span class="n">fluxmpi_println</span><span class="p">(</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t1</span><span class="p">)</span>
