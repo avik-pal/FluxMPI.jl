@@ -33,6 +33,9 @@ function __init__()
   @static if !isdefined(Base, :get_extension)
     # Handling ComponentArrays
     @require ComponentArrays="b0b7db55-cfe3-40fc-9ded-d10e2dbeff66" begin include("../ext/FluxMPIComponentArraysExt.jl") end
+
+    # Handling Flux
+    @require Flux="587475ba-b771-5e3f-ad9e-33799f191a9c" begin include("../ext/FluxMPIFluxExt.jl") end
   end
 end
 
@@ -70,7 +73,17 @@ include("optimizer.jl")
 # Support for MLUtils.jl DataLoader
 include("data.jl")
 
+# Extensions: Flux
+## We need this because Flux works on arbitrary types. Which means we cannot dispatch
+## `synchronize!` correctly. It is the user's responsibility to call `synchronize!` on
+## `FluxMPIFluxModel`.
+struct FluxMPIFluxModel{M}
+  model::M
+end
+
 export local_rank, total_workers, DistributedOptimizer, fluxmpi_print, fluxmpi_println,
        DistributedDataContainer, allreduce_gradients
+
+export FluxMPIFluxModel
 
 end

@@ -4,6 +4,7 @@
 Synchronize `x` across all processes.
 """
 function synchronize!(ps::Union{NamedTuple, Tuple}; root_rank::Integer=0)
+  length(ps) == 0 && return ps
   return fmap(x -> synchronize!(x; root_rank), ps)
 end
 

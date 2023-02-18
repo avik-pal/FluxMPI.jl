@@ -4,7 +4,8 @@ There are essentially 6 main steps to remember:
 
 1. Initialize FluxMPI [`FluxMPI.Init()`](@ref).
 
-2. Sync Model Parameters and States [`FluxMPI.synchronize!(ps; root_rank)`](@ref).
+2. Sync Model Parameters and States [`FluxMPI.synchronize!(ps; root_rank)`](@ref). (Remember
+   to use `FluxMPIFluxModel` for Flux models.)
 
 3. Use [`DistributedDataContainer`](@ref) to distribute your data evenly across the
    processes. (Of course an alternative is to just manually partition your data.)
