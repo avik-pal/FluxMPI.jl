@@ -13,4 +13,4 @@ Additionally, make sure to set `JULIA_CUDA_USE_MEMPOOL=none`.
 
 I would recommend **not** using this atm, since `JULIA_CUDA_USE_MEMPOOL=none` will severely
 slow down your code (*~2-3x* for most workloads I tested). Instead setup `MPI.jl` using you
-system provided MPI and set `FLUXMPI_DISABLE_CUDAMPI_SUPPORT=true`.
+system provided MPI and execute `FluxMPI.disable_cudampi_support()`.

@@ -1,17 +1,17 @@
-import FluxMPI, MPI, Test
+using FluxMPI, MPI, Test
 
 FluxMPI.Init(; verbose=true)
 
-Test.@testset "Common Utilities" begin
-  Test.@test FluxMPI.Initialized()
+@testset "Common Utilities" begin
+  @test FluxMPI.Initialized()
 
   # Should always hold true
-  Test.@test FluxMPI.local_rank() < FluxMPI.total_workers()
+  @test FluxMPI.local_rank() < FluxMPI.total_workers()
 
-  Test.@test_nowarn FluxMPI.clean_println("Printing from Rank ", FluxMPI.local_rank())
+  @test_nowarn FluxMPI.fluxmpi_println("Printing from Rank ", FluxMPI.local_rank())
 
-  Test.@test_nowarn FluxMPI.clean_print("Printing from Rank ", FluxMPI.local_rank(), "\n")
+  @test_nowarn FluxMPI.fluxmpi_print("Printing from Rank ", FluxMPI.local_rank(), "\n")
 
   MPI.Finalize()
-  Test.@test MPI.Finalized()
+  @test MPI.Finalized()
 end

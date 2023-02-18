@@ -1,11 +1,7 @@
 [deps]
 ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
 Optimisers = "3bd65402-5787-11e9-1adc-39752487f4e2"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-
-[compat]
-ComponentArrays = "0.11, 0.12"
-MPI = "0.19"
-Optimisers = "0.2"

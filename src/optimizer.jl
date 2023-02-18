@@ -1,6 +1,3 @@
-import Functors, MPI, Optimisers
-import .MPIExtensions
-
 """
     DistributedOptimizer(optimizer)
 
@@ -12,7 +9,7 @@ the gradients across the processes using non-blocking Allreduce
   - `optimizer`: An Optimizer compatible with the Optimisers.jl package
 
 !!! note
-    
+
     Remember to scale the loss function by `1 / total_workers()` to ensure
     that the gradients are correctly averaged
 """
@@ -21,7 +18,7 @@ struct DistributedOptimizer{O} <: Optimisers.AbstractRule
 end
 
 function Optimisers.apply!(o::DistributedOptimizer, state, x, y)
-  y_ = MPIExtensions.allreduce!(y, +, MPI.COMM_WORLD)
+  y_ = allreduce!(y, +, MPI.COMM_WORLD)
   return Optimisers.apply!(o.optimizer, state, x, y_)
 end
 
@@ -46,26 +43,23 @@ containers of multiple parameter arrays.
   - `Allreduce`d NamedTuple of gradients
 """
 function allreduce_gradients(gs::NamedTuple; on_gpu::Bool=CUDA.functional())
-  if on_gpu
-    # Transfer data to CPU since OpenMPI Iallreduce! doesn't work for CUDA
-    gs = Functors.fmap(MPIExtensions.cpu, gs)
-  end
+  # Transfer data to CPU since OpenMPI Iallreduce! doesn't work for CUDA
+  gs = on_gpu ? fmap(cpu, gs) : gs
 
   requests = MPI.Request[]
+
   nonblocking_reduce_gradients(g) = g
   function nonblocking_reduce_gradients(g::AbstractArray)
-    g, req = MPIExtensions.Iallreduce!(g, +, MPI.COMM_WORLD)
+    g, req = Iallreduce!(g, +, MPI.COMM_WORLD)
     push!(requests, req)
     return g
   end
 
-  gs = Functors.fmap(nonblocking_reduce_gradients, gs)
+  gs = fmap(nonblocking_reduce_gradients, gs)
   MPI.Waitall!(requests)
 
-  if on_gpu
-    # Transfer data back to GPU
-    gs = Functors.fmap(MPIExtensions.gpu, gs)
-  end
+  # Transfer data back to GPU
+  gs = on_gpu ? fmap(gpu, gs) : gs
 
   return gs
 end

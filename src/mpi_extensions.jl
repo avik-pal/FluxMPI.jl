@@ -1,33 +1,13 @@
-module MPIExtensions
-
-import Adapt, CUDA, MPI
-
-const mpi_is_cuda_aware = Ref(false)
-
 # NOTE(@avik-pal): Data Movement between CPU and GPU. `Lux` & `Flux` have much better
 #                  support for this but this is all we need here. If not an abstract array
 #                  don't do anything.
 # Maybe we want to have a central repository containing these device transfer utilities
 cpu(x) = x
 gpu(x) = x
-cpu(x::AbstractArray) = Adapt.adapt(Array, x)
-gpu(x::AbstractArray) = Adapt.adapt(CUDA.CuArray, x)
+cpu(x::AbstractArray) = adapt(Array, x)
+gpu(x::AbstractArray) = adapt(CuArray, x)
 
-function __init__()
-  # If using `mpi_is_cuda_aware` anywhere use the @static macro since we anyways need to
-  # recompile the code when MPI implementation changes
-  disable_cuda_aware_support = parse(Bool,
-                                     get(ENV, "FLUXMPI_DISABLE_CUDAMPI_SUPPORT", "false"))
-  mpi_is_cuda_aware[] = !disable_cuda_aware_support && MPI.has_cuda()
-  if disable_cuda_aware_support && MPI.has_cuda()
-    @info "CUDA-aware MPI support disabled using `FLUXMPI_DISABLE_CUDAMPI_SUPPORT=true`" maxlog=1
-  elseif !mpi_is_cuda_aware[]
-    @warn "MPI Implementation is not CUDA Aware" maxlog=1
-  end
-end
-
-# Certain Non-blocking collective communication primitives
-# TODO(@avik-pal): Upstream to MPI.jl
+## Certain Non-blocking collective communication primitives
 """
     Iallreduce!(sendbuf, recvbuf, op, comm)
     Iallreduce!(sendrecvbuf, op, comm)
@@ -39,7 +19,7 @@ Performs non-blocking elementwise reduction using the operator `op` on the buffe
 the request has been completed. (`MPI.Wait!`)
 
 !!! warning
-    
+
     OpenMPI doesn't support Iallreduce! with CUDA. See
     [this issue](https://github.com/open-mpi/ompi/issues/9845).
 """
@@ -97,12 +77,12 @@ Ibcast!(buf, root::Integer, comm::MPI.Comm) = Ibcast!(MPI.Buffer(buf), root, com
 Perform `MPI.Allreduce!` ensuring that CuArrays are safely transfered to CPU if CUDA-aware
 MPI is unavailable/disabled.
 """
-function allreduce!(v::CUDA.CuArray, op::Any, comm::MPI.Comm)
-  @static if !mpi_is_cuda_aware[]
+function allreduce!(v::CuArray, op::Any, comm::MPI.Comm)
+  @static if !MPI_IS_CUDA_AWARE[]
     v = cpu(v)
   end
   MPI.Allreduce!(v, op, comm)
-  @static if !mpi_is_cuda_aware[]
+  @static if !MPI_IS_CUDA_AWARE[]
     v = gpu(v)
   end
   return v
@@ -119,12 +99,12 @@ end
 Perform `MPI.Bcast!` ensuring that CuArrays are safely transfered to CPU if CUDA-aware MPI
 is unavailable/disabled.
 """
-function bcast!(v::CUDA.CuArray, root::Integer, comm::MPI.Comm)
-  @static if !mpi_is_cuda_aware[]
+function bcast!(v::CuArray, root::Integer, comm::MPI.Comm)
+  @static if !MPI_IS_CUDA_AWARE[]
     v = cpu(v)
   end
   MPI.Bcast!(v, root, comm)
-  @static if !mpi_is_cuda_aware[]
+  @static if !MPI_IS_CUDA_AWARE[]
     v = gpu(v)
   end
   return v
@@ -141,12 +121,12 @@ end
 Perform `MPI.Reduce!` ensuring that CuArrays are safely transfered to CPU if CUDA-aware MPI
 is unavailable/disabled.
 """
-function reduce!(v::CUDA.CuArray, op::Any, root::Integer, comm::MPI.Comm)
-  @static if !mpi_is_cuda_aware[]
+function reduce!(v::CuArray, op::Any, root::Integer, comm::MPI.Comm)
+  @static if !MPI_IS_CUDA_AWARE[]
     v = cpu(v)
   end
   MPI.Reduce!(v, op, root, comm)
-  @static if !mpi_is_cuda_aware[]
+  @static if !MPI_IS_CUDA_AWARE[]
     v = gpu(v)
   end
   return v
@@ -155,6 +135,4 @@ end
 function reduce!(v::AbstractArray, op::Any, root::Integer, comm::MPI.Comm)
   MPI.Reduce!(v, op, root, comm)
   return v
-end
-
 end
