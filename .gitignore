@@ -27,3 +27,4 @@ Manifest.toml
 benchmarks
 .vscode
 old
+test_ext

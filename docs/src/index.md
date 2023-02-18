@@ -9,18 +9,13 @@ Distributed Data Parallel Training of Neural Networks
     [Lux.jl](https://github.com/avik-pal/Lux.jl), and pretty much any framework which works
     with [Optimisers.jl](https://github.com/FluxML/Optimisers.jl).
 
-!!! warning
-
-    I will be changing the name of this package in the near future. (Probably something
-    along DDPUtils.jl)
-
 ## Installation
 
 Install [julia v1.6 or above](https://julialang.org/downloads/). Next Install the stable
 release:
 
 ```julia
-import Pkg
+using Pkg
 Pkg.add("FluxMPI")
 ```
 
@@ -28,7 +23,7 @@ To install the Latest development version (not very beneficial we release most p
 almost immediately):
 
 ```julia
-import Pkg
+using Pkg
 Pkg.add("FluxMPI", rev="main")
 ```
 

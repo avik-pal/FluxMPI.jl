@@ -27,32 +27,31 @@ Latest development version:
 ## Quick Start
 
 ```julia
-
-import CUDA, FluxMPI, Lux, Optimisers, Random, Zygote
+using CUDA, FluxMPI, Lux, Optimisers, Random, Zygote
 
 FluxMPI.Init()
 CUDA.allowscalar(false)
 
-model = Lux.Chain(Lux.Dense(1, 256, tanh), Lux.Dense(256, 512, tanh),
-                  Lux.Dense(512, 256, tanh),  Lux.Dense(256, 1))
+model = Chain(Dense(1 => 256, tanh), Dense(256 => 512, tanh), Dense(512 => 256, tanh),
+              Dense(256 => 1))
 rng = Random.default_rng()
-Random.seed!(rng, FluxMPI.local_rank())
-ps, st = Lux.setup(rng, model) .|> Lux.gpu
+Random.seed!(rng, local_rank())
+ps, st = Lux.setup(rng, model) .|> gpu
 
 ps = FluxMPI.synchronize!(ps; root_rank = 0)
 st = FluxMPI.synchronize!(st; root_rank = 0)
 
-x = rand(rng, 1, 16) |> Lux.gpu
+x = rand(rng, 1, 16) |> gpu
 y = x .^ 2
 
-opt = FluxMPI.DistributedOptimizer(Optimisers.ADAM(0.001f0))
+opt = DistributedOptimizer(Adam(0.001f0))
 st_opt = Optimisers.setup(opt, ps)
 
 loss(p) = sum(abs2, model(x, p, st)[1] .- y)
 
 st_opt = FluxMPI.synchronize!(st_opt; root_rank = 0)
 
-gs_ = Zygote.gradient(loss, ps)[1]
+gs_ = gradient(loss, ps)[1]
 Optimisers.update(st_opt, ps, gs_)
 
 t1 = time()
@@ -60,12 +59,12 @@ t1 = time()
 for epoch in 1:100
   global ps, st_opt
   l, back = Zygote.pullback(loss, ps)
-  FluxMPI.clean_println("Epoch $epoch: Loss $l")
+  FluxMPI.fluxmpi_println("Epoch $epoch: Loss $l")
   gs = back(one(l))[1]
   st_opt, ps = Optimisers.update(st_opt, ps, gs)
 end
 
-FluxMPI.clean_println(time() - t1)
+FluxMPI.fluxmpi_println(time() - t1)
 ```
 
 Run the code using `mpiexecjl -n 3 julia --project=. <filename>.jl`.
@@ -83,11 +82,22 @@ contributions must adhere to this style guide.
 
 ## Changelog
 
-### v0.6
+### v0.7
+
+* Dropped support for MPI v0.19.
+* `FLUXMPI_DISABLE_CUDAMPI_SUPPORT` is no longer used. Instead use
+  `FluxMPI.disable_cudampi_support()` to setup a LocalPreferences.toml file.
+* `clean_(print/println)` functions are now `fluxmpi_(print/println)`.
+
+<details>
+
+<summary><h3>v0.6</h3></summary>
 
 * Dropped support for `LearnBase`, aka `DataLoaders.jl`. `DistributedDataContainer` is now
   the only compatible with `MLUtils.jl`.
 * `DistributedOptimiser` name changed to `DistributedOptimizer`.
+
+</details>
 
 <details>
 
@@ -123,7 +133,7 @@ contributions must adhere to this style guide.
 
 <summary><h3>v0.4</h3></summary>
 
-* `clean_print` and `clean_println` print the current time even if `FluxMPI` has not been
+* `fluxmpi_print` and `fluxmpi_println` print the current time even if `FluxMPI` has not been
   initialized.
 * Calling `local_rank` or `total_workers` before `FluxMPI.Init` doesn't lead to a segfault.
   Rather we throw an error.

@@ -9,7 +9,7 @@ Pages = ["api.md"]
 ## Data Helpers
 
 ```@docs
-FluxMPI.DistributedDataContainer
+DistributedDataContainer
 ```
 
 ## General Functions
@@ -17,38 +17,42 @@ FluxMPI.DistributedDataContainer
 ```@docs
 FluxMPI.Init
 FluxMPI.Initialized
-FluxMPI.clean_print
-FluxMPI.clean_println
-FluxMPI.local_rank
-FluxMPI.total_workers
+fluxmpi_print
+fluxmpi_println
+local_rank
+total_workers
 ```
 
-## MPIExtensions
-
-### Blocking Communication Wrappers
+## MPIExtensions: Blocking Communication Wrappers
 
 ```@docs
-FluxMPI.MPIExtensions.allreduce!
-FluxMPI.MPIExtensions.bcast!
-FluxMPI.MPIExtensions.reduce!
+FluxMPI.allreduce!
+FluxMPI.bcast!
+FluxMPI.reduce!
 ```
 
-### Non-Blocking Communication
+## MPIExtensions: Non-Blocking Communication
 
 ```@docs
-FluxMPI.MPIExtensions.Iallreduce!
-FluxMPI.MPIExtensions.Ibcast!
+FluxMPI.Iallreduce!
+FluxMPI.Ibcast!
 ```
 
 ## Optimization
 
 ```@docs
-FluxMPI.DistributedOptimizer
-FluxMPI.allreduce_gradients
+DistributedOptimizer
+allreduce_gradients
 ```
 
 ## Synchronization
 
 ```@docs
 FluxMPI.synchronize!
+```
+
+## Configuration
+
+```@docs
+FluxMPI.disable_cudampi_support
 ```

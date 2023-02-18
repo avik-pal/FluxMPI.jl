@@ -1,66 +1,62 @@
-import FluxMPI, MPI, Test
+using FluxMPI, MPI, Test
 
 FluxMPI.Init(; verbose=true)
 
 function _get_array_based_on_rank(dims; root_rank)
-  if FluxMPI.local_rank() == root_rank
-    return ones(dims...)
-  else
-    return zeros(dims...)
-  end
+  return local_rank() == root_rank ? ones(dims...) : zeros(dims...)
 end
 
-Test.@testset "Iallreduce!" begin
+@testset "Iallreduce!" begin
   x = ones(4)
 
   y = similar(x)
-  y, req = FluxMPI.MPIExtensions.Iallreduce!(x, y, +, MPI.COMM_WORLD)
+  y, req = FluxMPI.Iallreduce!(x, y, +, MPI.COMM_WORLD)
   MPI.Wait!(req)
 
-  Test.@test y == x .* FluxMPI.total_workers()
+  @test y == x .* total_workers()
 
   y = similar(x)
-  y, req = FluxMPI.MPIExtensions.Iallreduce!(x, y, *, MPI.COMM_WORLD)
+  y, req = FluxMPI.Iallreduce!(x, y, *, MPI.COMM_WORLD)
   MPI.Wait!(req)
 
-  Test.@test y == x
+  @test y == x
 end
 
-Test.@testset "Ibcast!" begin
+@testset "Ibcast!" begin
   x = _get_array_based_on_rank((2, 3); root_rank=0)
 
-  y, req = FluxMPI.MPIExtensions.Ibcast!(x, 0, MPI.COMM_WORLD)
+  y, req = FluxMPI.Ibcast!(x, 0, MPI.COMM_WORLD)
   MPI.Wait!(req)
 
-  Test.@test y == one.(x)
+  @test y == one.(x)
 end
 
-Test.@testset "Wrappers" begin
-  Test.@testset "allreduce" begin
+@testset "Wrappers" begin
+  @testset "allreduce" begin
     x = ones(4)
 
-    y = FluxMPI.MPIExtensions.allreduce!(copy(x), +, MPI.COMM_WORLD)
-    Test.@test y == x .* FluxMPI.total_workers()
+    y = FluxMPI.allreduce!(copy(x), +, MPI.COMM_WORLD)
+    @test y == x .* total_workers()
 
-    y = FluxMPI.MPIExtensions.allreduce!(copy(x), *, MPI.COMM_WORLD)
-    Test.@test y == x
+    y = FluxMPI.allreduce!(copy(x), *, MPI.COMM_WORLD)
+    @test y == x
   end
 
-  Test.@testset "bcast" begin
+  @testset "bcast" begin
     x = _get_array_based_on_rank((2, 3); root_rank=0)
 
-    y = FluxMPI.MPIExtensions.bcast!(copy(x), 0, MPI.COMM_WORLD)
-    Test.@test y == one.(x)
+    y = FluxMPI.bcast!(copy(x), 0, MPI.COMM_WORLD)
+    @test y == one.(x)
   end
 
-  Test.@testset "reduce" begin
+  @testset "reduce" begin
     x = ones(4)
 
-    y = FluxMPI.MPIExtensions.reduce!(copy(x), +, 0, MPI.COMM_WORLD)
-    if FluxMPI.local_rank() == 0
-      Test.@test y == x .* FluxMPI.total_workers()
+    y = FluxMPI.reduce!(copy(x), +, 0, MPI.COMM_WORLD)
+    if local_rank() == 0
+      @test y == x .* total_workers()
     else
-      Test.@test y == x
+      @test y == x
     end
   end
 end

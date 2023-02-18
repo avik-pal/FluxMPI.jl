@@ -1,9 +1,8 @@
 theme:
   name: material
   features:
-    - navigation.sections # Sections are included in the navigation on the left.
-    - toc.integrate # Table of contents is integrated on the left; does not appear separately on the right.
     - header.autohide # header disappears as you scroll
+    - navigation.top
   palette:
     # Light mode / dark mode
     # We deliberately don't automatically use `media` to check a user's preferences. We default to light mode as
@@ -91,6 +90,7 @@ nav:
   - "FluxMPI.jl: Distributed Data Parallel Training of Neural Networks": "index.md"
   - "Examples":
     - "Usage with Lux": "examples/lux.md"
+    - "Usage with Flux": "examples/flux.md"
   - "Manual":
     - "Usage Guide": "guide.md"
     - "API Reference": "api.md"
