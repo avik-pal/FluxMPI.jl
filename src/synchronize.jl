@@ -1,7 +1,7 @@
 """
     synchronize!(x; root_rank::Integer=0)
 
-Synchronize `x` across all processes.
+Synchronize `x` across all processes. Note: this function is not in-place for CuArrays when MPI is not CUDA aware.
 """
 function synchronize!(ps::Union{NamedTuple, Tuple}; root_rank::Integer=0)
   length(ps) == 0 && return ps
@@ -9,8 +9,7 @@ function synchronize!(ps::Union{NamedTuple, Tuple}; root_rank::Integer=0)
 end
 
 function synchronize!(x::AbstractArray{T}; root_rank::Integer=0) where {T <: Number}
-  bcast!(x, root_rank, MPI.COMM_WORLD)
-  return x
+  return bcast!(x, root_rank, MPI.COMM_WORLD)
 end
 
 # Ideally these things should be Tuples and not arrays
