@@ -4,7 +4,7 @@
 [![Latest](https://img.shields.io/badge/docs-dev-blue.svg)](https://avik-pal.github.io/FluxMPI.jl/dev/)
 
 [![CI](https://github.com/avik-pal/FluxMPI.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/avik-pal/FluxMPI.jl/actions/workflows/CI.yml)
-[![codecov](https://codecov.io/github/avik-pal/FluxMPI.jl/branch/master/graph/badge.svg?token=1L3ePmqyPo)](https://codecov.io/github/avik-pal/FluxMPI.jl)
+[![codecov](https://codecov.io/github/avik-pal/FluxMPI.jl/branch/main/graph/badge.svg?token=1L3ePmqyPo)](https://codecov.io/github/avik-pal/FluxMPI.jl)
 [![Package Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/FluxMPI)](https://pkgs.genieframework.com?packages=FluxMPI)
 
 [![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
