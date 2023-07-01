@@ -4,6 +4,7 @@
 Synchronize `x` across all processes.
 
 !!! note
+
     this function is not in-place for CuArrays when MPI is not CUDA aware.
 """
 function synchronize!(ps::Union{NamedTuple, Tuple}; root_rank::Integer=0)

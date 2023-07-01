@@ -32,10 +32,14 @@ function __init__()
 
   @static if !isdefined(Base, :get_extension)
     # Handling ComponentArrays
-    @require ComponentArrays="b0b7db55-cfe3-40fc-9ded-d10e2dbeff66" begin include("../ext/FluxMPIComponentArraysExt.jl") end
+    @require ComponentArrays="b0b7db55-cfe3-40fc-9ded-d10e2dbeff66" begin
+      include("../ext/FluxMPIComponentArraysExt.jl")
+    end
 
     # Handling Flux
-    @require Flux="587475ba-b771-5e3f-ad9e-33799f191a9c" begin include("../ext/FluxMPIFluxExt.jl") end
+    @require Flux="587475ba-b771-5e3f-ad9e-33799f191a9c" begin
+      include("../ext/FluxMPIFluxExt.jl")
+    end
   end
 end
 
@@ -81,8 +85,13 @@ struct FluxMPIFluxModel{M}
   model::M
 end
 
-export local_rank, total_workers, DistributedOptimizer, fluxmpi_print, fluxmpi_println,
-       DistributedDataContainer, allreduce_gradients
+export local_rank,
+  total_workers,
+  DistributedOptimizer,
+  fluxmpi_print,
+  fluxmpi_println,
+  DistributedDataContainer,
+  allreduce_gradients
 
 export FluxMPIFluxModel
 

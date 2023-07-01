@@ -15,8 +15,8 @@ end
 
   @testset "NamedTuple" begin
     gs = (a=(b=_get_array_based_on_rank((2, 3); root_rank),
-             c=_get_array_based_on_rank((2, 3); root_rank)),
-          d=_get_array_based_on_rank((2, 3); root_rank))
+        c=_get_array_based_on_rank((2, 3); root_rank)),
+      d=_get_array_based_on_rank((2, 3); root_rank))
 
     gs_ = FluxMPI.synchronize!(gs; root_rank)
 
@@ -55,8 +55,8 @@ end
 
     @testset "ComponentArray" begin
       gs = (a=(b=_get_array_based_on_rank((2, 3); root_rank),
-               c=_get_array_based_on_rank((2, 3); root_rank)),
-            d=_get_array_based_on_rank((2, 3); root_rank))
+          c=_get_array_based_on_rank((2, 3); root_rank)),
+        d=_get_array_based_on_rank((2, 3); root_rank))
       cgs = ComponentArray(gs)
       cgs_ = FluxMPI.synchronize!(cgs; root_rank)
 
@@ -68,8 +68,8 @@ end
 
   @testset "Tuple" begin
     gs = ((_get_array_based_on_rank((2, 3); root_rank),
-           _get_array_based_on_rank((2, 3); root_rank)),
-          _get_array_based_on_rank((2, 3); root_rank))
+        _get_array_based_on_rank((2, 3); root_rank)),
+      _get_array_based_on_rank((2, 3); root_rank))
 
     gs = FluxMPI.synchronize!(gs; root_rank)
 
