@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/api/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/common_gotchas/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/guide/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/examples/flux/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://avik-pal.github.io/FluxMPI.jl/examples/lux/</loc>
-         <lastmod>2023-09-04</lastmod>
+         <lastmod>2023-10-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
