@@ -85,13 +85,8 @@ struct FluxMPIFluxModel{M}
   model::M
 end
 
-export local_rank,
-  total_workers,
-  DistributedOptimizer,
-  fluxmpi_print,
-  fluxmpi_println,
-  DistributedDataContainer,
-  allreduce_gradients
+export local_rank, total_workers, DistributedOptimizer, fluxmpi_print, fluxmpi_println,
+       DistributedDataContainer, allreduce_gradients
 
 export FluxMPIFluxModel
 

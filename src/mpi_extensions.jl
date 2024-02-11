@@ -30,13 +30,8 @@ function Iallreduce!(rbuf::MPI.RBuffer, op::Union{MPI.Op, MPI.MPI_Op}, comm::MPI
   #                    MPI_Request * request)
   MPI.@mpichk ccall((:MPI_Iallreduce, MPI.libmpi),
     Cint,
-    (MPI.MPIPtr,
-      MPI.MPIPtr,
-      Cint,
-      MPI.MPI_Datatype,
-      MPI.MPI_Op,
-      MPI.MPI_Comm,
-      Ptr{MPI.MPI_Request}),
+    (MPI.MPIPtr, MPI.MPIPtr, Cint, MPI.MPI_Datatype,
+      MPI.MPI_Op, MPI.MPI_Comm, Ptr{MPI.MPI_Request}),
     rbuf.senddata,
     rbuf.recvdata,
     rbuf.count,
@@ -71,15 +66,9 @@ function Ibcast!(buf::MPI.Buffer, root::Integer, comm::MPI.Comm)
   req = MPI.Request()
   # int MPI_Ibcast(void *buffer, int count, MPI_Datatype datatype, int root,
   #                MPI_Comm comm, MPI_Request *request)
-  MPI.@mpichk ccall((:MPI_Ibcast, MPI.libmpi),
-    Cint,
+  MPI.@mpichk ccall((:MPI_Ibcast, MPI.libmpi), Cint,
     (MPI.MPIPtr, Cint, MPI.MPI_Datatype, Cint, MPI.MPI_Comm, Ptr{MPI.MPI_Request}),
-    buf.data,
-    buf.count,
-    buf.datatype,
-    root,
-    comm,
-    req)
+    buf.data, buf.count, buf.datatype, root, comm, req)
   req.buffer = buf
   finalizer(MPI.free, req)
   return buf.data, req
