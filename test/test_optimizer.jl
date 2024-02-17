@@ -18,9 +18,8 @@ FluxMPI.Init(; verbose=true)
   gs = (a=ones(4), b=ones(4))
 
   _, ps_dopt = Optimisers.update(st_dopt, ps, gs)
-  _, ps_opt = Optimisers.update(st_opt,
-    ps,
-    (a=gs.a .* FluxMPI.total_workers(), b=gs.b .* FluxMPI.total_workers()))
+  _, ps_opt = Optimisers.update(
+    st_opt, ps, (a=gs.a .* FluxMPI.total_workers(), b=gs.b .* FluxMPI.total_workers()))
 
   @test isapprox(ps_dopt.a, ps_opt.a; atol=1.0e-5, rtol=1.0e-5)
   @test isapprox(ps_dopt.b, ps_opt.b; atol=1.0e-5, rtol=1.0e-5)

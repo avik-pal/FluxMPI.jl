@@ -14,7 +14,8 @@ end
   root_rank = 0
 
   @testset "NamedTuple" begin
-    gs = (a=(b=_get_array_based_on_rank((2, 3); root_rank),
+    gs = (
+      a=(b=_get_array_based_on_rank((2, 3); root_rank),
         c=_get_array_based_on_rank((2, 3); root_rank)),
       d=_get_array_based_on_rank((2, 3); root_rank))
 
@@ -54,7 +55,8 @@ end
     end
 
     @testset "ComponentArray" begin
-      gs = (a=(b=_get_array_based_on_rank((2, 3); root_rank),
+      gs = (
+        a=(b=_get_array_based_on_rank((2, 3); root_rank),
           c=_get_array_based_on_rank((2, 3); root_rank)),
         d=_get_array_based_on_rank((2, 3); root_rank))
       cgs = ComponentArray(gs)
@@ -67,7 +69,8 @@ end
   end
 
   @testset "Tuple" begin
-    gs = ((_get_array_based_on_rank((2, 3); root_rank),
+    gs = (
+      (_get_array_based_on_rank((2, 3); root_rank),
         _get_array_based_on_rank((2, 3); root_rank)),
       _get_array_based_on_rank((2, 3); root_rank))
 
