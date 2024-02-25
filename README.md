@@ -1,5 +1,8 @@
 # FluxMPI.jl
 
+> [!CAUTION]
+> This package should be considered deprecated and won't receive any updates. Distributed Training will become a native feature for Lux, so it makes little sense for me to maintain an additional package that does the same thing. Track https://github.com/LuxDL/Lux.jl/issues/494 for furthur updates.
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://avik-pal.github.io/FluxMPI.jl/stable/)
 [![Latest](https://img.shields.io/badge/docs-dev-blue.svg)](https://avik-pal.github.io/FluxMPI.jl/dev/)
 
